@@ -44,7 +44,9 @@ class SongsViewPagerFragment : Fragment() {
     }
 
     private fun init() {
-        songsRvAdapter = RvSongsAdapter(requireContext(), arrayListOf())
+        songsRvAdapter = RvSongsAdapter(requireContext(), arrayListOf()) {
+            vm.currentSongId.postValue(it)
+        }
         binding.rvSongList.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = songsRvAdapter

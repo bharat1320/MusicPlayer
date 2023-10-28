@@ -9,4 +9,8 @@ class MainViewModel: ViewModel() {
     var repository = SongsRepository(this)
 
     var songsList : MutableLiveData<SongsResponse> = MutableLiveData()
+
+    var currentSongId : MutableLiveData<Int> = MutableLiveData()
+
+    var stateOpened : MutableLiveData<Boolean> = MutableLiveData()
 }
