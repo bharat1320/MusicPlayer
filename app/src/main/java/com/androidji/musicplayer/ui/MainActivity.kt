@@ -1,13 +1,19 @@
-package com.androidji.musicplayer
+package com.androidji.musicplayer.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.androidji.musicplayer.databinding.ActivityMainBinding
+import com.androidji.musicplayer.ui.adapters.RvSongsAdapter
+import com.androidji.musicplayer.ui.viewModels.MainViewModel
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
+    lateinit var vm : MainViewModel
+    lateinit var songsRvAdapter : RvSongsAdapter
     var stateExpanded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,12 +21,40 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        vm = ViewModelProvider(this)[MainViewModel::class.java]
+
         supportActionBar?.hide()
 
+        observer()
+
         init()
+
+        apiCalls()
+
+//        listeners()
+
     }
 
-    fun init() {
+    private fun init() {
+        songsRvAdapter = RvSongsAdapter(this, arrayListOf())
+        binding.rvSongList.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = songsRvAdapter
+        }
+    }
+
+    private fun apiCalls() {
+        vm.repository.getSongList()
+    }
+
+    private fun observer() {
+        vm.songsList.observe(this) {
+            songsRvAdapter.refreshData(it.data)
+        }
+    }
+
+    private fun listeners() {
+        binding.motionLayout.transitionToEnd()
         binding.buttonPlay.setOnClickListener {
             Toast.makeText(this, stateExpanded.toString(), Toast.LENGTH_SHORT).show()
             if(stateExpanded) {

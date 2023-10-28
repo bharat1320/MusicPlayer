@@ -37,6 +37,7 @@
             android:text="@string/hariharan"
             android:textSize="@dimen/_16sp"
             android:ellipsize="end"
+            android:alpha="0.6"
             android:textColor="@color/grey" />
 
     </LinearLayout>
