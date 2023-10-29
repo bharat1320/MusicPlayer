@@ -20,7 +20,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var vm : MainViewModel
-    var playerFragment: Fragment = SongPlayerFragment()
+    lateinit var playerFragment: Fragment
     var fragments = arrayListOf<ViewPagerFragment>()
     var stateClosed = true
 
@@ -29,22 +29,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        vm = ViewModelProvider(this)[MainViewModel::class.java]
-
-        supportActionBar?.hide()
+        init()
 
         observer()
-
-        init()
 
         apiCalls()
 
         listeners()
 
-        binding.fragmentSongPlayer.visibility = View.GONE
     }
 
     private fun init() {
+        vm = ViewModelProvider(this)[MainViewModel::class.java]
+
+        supportActionBar?.hide()
+
+        playerFragment = SongPlayerFragment()
         fragments.add(ViewPagerFragment(SongsViewPagerFragment.newInstance(false),"For You"))
         fragments.add(ViewPagerFragment(SongsViewPagerFragment.newInstance(true),"Top Tracks"))
         binding.viewPager.adapter = (object : FragmentStateAdapter(this) {
@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
             override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
         })
 
+        binding.fragmentSongPlayer.visibility = View.GONE
     }
 
     private fun apiCalls() {

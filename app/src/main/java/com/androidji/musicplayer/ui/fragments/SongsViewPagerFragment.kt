@@ -41,7 +41,6 @@ class SongsViewPagerFragment : Fragment() {
 
         observer()
 
-//        listeners()
     }
 
     private fun init() {
