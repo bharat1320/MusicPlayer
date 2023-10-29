@@ -37,9 +37,7 @@ class RvSongPlayerAdapter(var context: Context,
         val binding = holder.binding
 
         songs[position].let {
-            it.cover?.let { cover ->
-                Glide.with(context).load(URLS.BASE_URL + URLS.getSongCover + cover).into(binding.itemSongCover)
-            }
+            Glide.with(context).load(it.getImageUrl()).into(binding.itemSongCover)
         }
     }
 }

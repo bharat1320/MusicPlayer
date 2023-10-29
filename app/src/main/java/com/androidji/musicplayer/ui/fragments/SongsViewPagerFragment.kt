@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.androidji.musicplayer.data.CurrentSong
 import com.androidji.musicplayer.databinding.FragmentSongsViewPagerBinding
 import com.androidji.musicplayer.ui.adapters.RvSongsAdapter
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
@@ -45,7 +46,7 @@ class SongsViewPagerFragment : Fragment() {
 
     private fun init() {
         songsRvAdapter = RvSongsAdapter(requireContext(), arrayListOf()) {
-            vm.currentSongId.postValue(it)
+            vm.currentSong.postValue(it)
         }
         binding.rvSongList.apply {
             layoutManager = LinearLayoutManager(requireContext())

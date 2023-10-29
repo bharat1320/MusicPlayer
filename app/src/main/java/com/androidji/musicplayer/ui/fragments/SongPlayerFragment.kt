@@ -1,20 +1,18 @@
 package com.androidji.musicplayer.ui.fragments
 
-import android.app.Activity
-import android.os.Binder
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.androidji.musicplayer.R
 import com.androidji.musicplayer.databinding.FragmentSongPlayerBinding
-import com.androidji.musicplayer.databinding.FragmentSongsViewPagerBinding
 import com.androidji.musicplayer.ui.adapters.RvSongPlayerAdapter
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import jp.wasabeef.glide.transformations.BlurTransformation
 
 class SongPlayerFragment : Fragment() {
     lateinit var binding: FragmentSongPlayerBinding
@@ -57,11 +55,15 @@ class SongPlayerFragment : Fragment() {
     }
 
     private fun observer() {
-        vm.currentSongId.observe(requireActivity()) { idd ->
-            binding.rvSongs.smoothScrollToPosition(idd)
-            val currentSong = adapter.songs.filter { it.id == idd }[0]
-            binding.itemSongName.text = currentSong.name
-            binding.itemSongSinger.text = currentSong.artist
+        vm.currentSong.observe(requireActivity()) { it ->
+            binding.rvSongs.smoothScrollToPosition(it.position)
+            binding.itemSongName.text = it.song.name
+            binding.itemSongSinger.text = it.song.artist
+            Glide.with(requireContext())
+                .asBitmap()
+                .load(it.song.getImageUrl())
+                .apply(RequestOptions.bitmapTransform(BlurTransformation(25, 12)))
+                .into(binding.background)
         }
 
         vm.stateOpened.observe(requireActivity()) {

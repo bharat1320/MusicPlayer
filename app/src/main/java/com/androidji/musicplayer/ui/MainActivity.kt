@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observer() {
-        vm.currentSongId.observe(this) {
+        vm.currentSong.observe(this) {
             openPlayerFragment()
         }
     }

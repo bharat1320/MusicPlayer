@@ -7,6 +7,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.androidji.musicplayer.data.CurrentSong
 import com.androidji.musicplayer.data.Song
 import com.androidji.musicplayer.databinding.RvSongItemBinding
 import com.androidji.musicplayer.utils.URLS.Companion.BASE_URL
@@ -15,7 +16,7 @@ import com.bumptech.glide.Glide
 
 class RvSongsAdapter(var context: Context,
                      var songs : ArrayList<Song>,
-                     var listener : (id :Int) -> Unit = {}
+                     var listener : (currentSong : CurrentSong) -> Unit = {}
 ) : RecyclerView.Adapter<RvSongsAdapter.RvSongsViewHolder>() {
 
     inner class RvSongsViewHolder(var binding : RvSongItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -40,11 +41,9 @@ class RvSongsAdapter(var context: Context,
         songs[position].let {
             binding.itemSongName.text = it.name ?: ""
             binding.itemSongSinger.text = it.artist ?: ""
-            it.cover?.let { cover ->
-                Glide.with(context).load(BASE_URL + getSongCover + cover).circleCrop().into(binding.itemCoverImage)
-            }
+            Glide.with(context).load(it.getImageUrl()).circleCrop().into(binding.itemCoverImage)
             holder.itemView.setOnClickListener { view ->
-                listener(it.id?:0)
+                listener(CurrentSong(it,it.id?:0))
             }
         }
     }

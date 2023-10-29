@@ -1,5 +1,6 @@
 package com.androidji.musicplayer.data
 
+import com.androidji.musicplayer.utils.URLS
 import com.google.gson.annotations.SerializedName
 
 data class SongsResponse(
@@ -19,4 +20,11 @@ data class Song(
     @SerializedName("cover"        ) var cover       : String?  = null,
     @SerializedName("top_track"    ) var topTrack    : Boolean? = null,
     @SerializedName("url"          ) var url         : String?  = null
+) {
+    fun getImageUrl() = URLS.BASE_URL + URLS.getSongCover + cover
+}
+
+data class CurrentSong(
+    var song : Song,
+    var position :Int
 )
