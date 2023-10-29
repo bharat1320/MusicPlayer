@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.androidji.musicplayer.ui.CustomMotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/motionLayout"
     android:layout_width="match_parent"
@@ -90,4 +90,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-</com.androidji.musicplayer.ui.CustomMotionLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>

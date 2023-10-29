@@ -7,10 +7,6 @@
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
         motion:duration="500">
-<!--       <KeyFrameSet>-->
-<!--       </KeyFrameSet>-->
-<!--&lt;!&ndash;        <OnSwipe motion:touchAnchorSide="bottom" />&ndash;&gt;-->
-<!--        <OnClick motion:targetId="@+id/fragment_song_player" />-->
     </Transition>
 
     <ConstraintSet android:id="@+id/start">

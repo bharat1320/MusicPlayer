@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var vm : MainViewModel
     var playerFragment: Fragment = SongPlayerFragment()
     var fragments = arrayListOf<ViewPagerFragment>()
-    var stateExpanded = false
+    var stateExpanded = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,16 +69,15 @@ class MainActivity : AppCompatActivity() {
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
 
-//        binding.motionLayout.setTransitionListener(object : MotionLayout.TransitionListener {
-//            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-//                stateExpanded = !stateExpanded
-//                vm.stateOpened.postValue(stateExpanded)
-//            }
-//            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {}
-//            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
-//            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
-//        })
-        binding.motionLayout.views = arrayListOf(binding.viewPager,binding.fragmentSongPlayer)
+        binding.motionLayout.setTransitionListener(object : MotionLayout.TransitionListener {
+            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
+                stateExpanded = !stateExpanded
+                vm.stateOpened.postValue(stateExpanded)
+            }
+            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {}
+            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
+            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
+        })
 
     }
 
