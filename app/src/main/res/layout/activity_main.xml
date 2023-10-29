@@ -7,63 +7,6 @@
     android:background="@color/black"
     app:layoutDescription="@xml/activity_main_scene">
 
-    <!--    <ImageView-->
-    <!--        android:id="@+id/imageView"-->
-    <!--        android:layout_width="@dimen/_308dp"-->
-    <!--        android:layout_height="0dp"-->
-    <!--        android:paddingVertical="@dimen/_8dp"-->
-    <!--        android:paddingHorizontal="@dimen/_18dp"-->
-    <!--        android:background="@android:color/holo_green_light"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintDimensionRatio="1,1"-->
-    <!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-    <!--    <ImageButton-->
-    <!--        android:id="@+id/button_play"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:background="?android:attr/selectableItemBackground"-->
-    <!--        android:padding="10dp"-->
-    <!--        android:src="@android:drawable/ic_media_play"-->
-    <!--        app:layout_constraintEnd_toStartOf="@+id/button_forward"-->
-    <!--        app:layout_constraintHorizontal_bias="0.5"-->
-    <!--        app:layout_constraintStart_toEndOf="@+id/button_rewind"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/imageView" />-->
-
-    <!--    <ImageButton-->
-    <!--        android:id="@+id/button_rewind"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:background="?android:attr/selectableItemBackground"-->
-    <!--        android:padding="@dimen/_10dp"-->
-    <!--        android:src="@android:drawable/ic_media_rew"-->
-    <!--        android:alpha="1"-->
-    <!--        app:layout_constraintBottom_toBottomOf="@id/button_play"-->
-    <!--        app:layout_constraintEnd_toStartOf="@+id/button_play"-->
-    <!--        app:layout_constraintHorizontal_bias="0.5"-->
-    <!--        app:layout_constraintStart_toStartOf="parent" />-->
-
-    <!--    <ImageButton-->
-    <!--        android:id="@+id/button_forward"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:background="?android:attr/selectableItemBackground"-->
-    <!--        android:padding="@dimen/_10dp"-->
-    <!--        android:src="@android:drawable/ic_media_ff"-->
-    <!--        android:alpha="1"-->
-    <!--        app:layout_constraintBottom_toBottomOf="@id/button_play"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.5"-->
-    <!--        app:layout_constraintStart_toEndOf="@+id/button_play" />-->
-
-    <!--    <TableLayout-->
-    <!--        android:id="@+id/tab_layout"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="@dimen/_120dp"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"/>-->
-
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"

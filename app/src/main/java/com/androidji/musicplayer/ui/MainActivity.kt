@@ -1,22 +1,15 @@
 package com.androidji.musicplayer.ui
 
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.text.Html
-import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import android.window.OnBackInvokedDispatcher
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
-import com.androidji.musicplayer.R
 import com.androidji.musicplayer.data.ViewPagerFragment
 import com.androidji.musicplayer.databinding.ActivityMainBinding
 import com.androidji.musicplayer.ui.fragments.SongPlayerFragment
@@ -29,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var vm : MainViewModel
     var playerFragment: Fragment = SongPlayerFragment()
     var fragments = arrayListOf<ViewPagerFragment>()
-    var stateExpanded = true
+    var stateClosed = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         listeners()
 
+        binding.fragmentSongPlayer.visibility = View.GONE
     }
 
     private fun init() {
@@ -64,15 +58,14 @@ class MainActivity : AppCompatActivity() {
             tab.text = Html.fromHtml("<b>${fragments[position].name}</b>")
         }.attach()
 
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(binding.fragmentSongPlayer.id, playerFragment)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
+        supportFragmentManager.beginTransaction()
+            .replace(binding.fragmentSongPlayer.id, playerFragment)
+            .commit()
 
         binding.motionLayout.setTransitionListener(object : MotionLayout.TransitionListener {
             override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-                stateExpanded = !stateExpanded
-                vm.stateOpened.postValue(stateExpanded)
+                stateClosed = !stateClosed
+                vm.stateOpened.postValue(stateClosed)
             }
             override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {}
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
@@ -87,17 +80,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun observer() {
         vm.currentSongId.observe(this) {
-            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
             openPlayerFragment()
-        }
-    }
-
-    fun openPlayerFragment() {
-        binding.fragmentSongPlayer.visibility = View.VISIBLE
-        if(stateExpanded) {
-            binding.motionLayout.transitionToEnd()
-        } else {
-            binding.motionLayout.transitionToStart()
         }
     }
 
@@ -106,20 +89,28 @@ class MainActivity : AppCompatActivity() {
             openPlayerFragment()
         }
     }
-}
 
-class CustomMotionLayout(context: Context, attrs: AttributeSet?) : MotionLayout(context, attrs) {
-    var views: ArrayList<ViewGroup>? = null  // Reference to the RecyclerView
-    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        views?.forEach {
-            it.onInterceptTouchEvent(ev)
+    fun openPlayerFragment() {
+        binding.fragmentSongPlayer.visibility = View.VISIBLE
+        if(stateClosed) {
+            binding.motionLayout.transitionToEnd()
+        } else {
+            binding.motionLayout.transitionToStart()
         }
-        return super.onInterceptTouchEvent(ev)
     }
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        views?.forEach {
-            it.onTouchEvent(event)
+
+    override fun onBackPressed() {
+        if(stateClosed) {
+            val i = Intent()
+            i.action = Intent.ACTION_MAIN
+            i.addCategory(Intent.CATEGORY_HOME)
+            this.startActivity(i)
+        } else {
+            openPlayerFragment()
         }
-        return super.onTouchEvent(event)
+        if(false) {
+            // dont close the app, put it in background
+            super.onBackPressed()
+        }
     }
 }
