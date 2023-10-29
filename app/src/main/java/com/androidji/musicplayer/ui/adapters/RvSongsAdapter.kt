@@ -3,6 +3,9 @@ package com.androidji.musicplayer.ui.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.androidji.musicplayer.data.Song
 import com.androidji.musicplayer.databinding.RvSongItemBinding
@@ -18,7 +21,9 @@ class RvSongsAdapter(var context: Context,
     inner class RvSongsViewHolder(var binding : RvSongItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RvSongsViewHolder {
-        return RvSongsViewHolder(RvSongItemBinding.inflate(LayoutInflater.from(context)))
+        var layout = RvSongItemBinding.inflate(LayoutInflater.from(context))
+        layout.root.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        return RvSongsViewHolder(layout)
     }
 
     override fun getItemCount() = songs.size

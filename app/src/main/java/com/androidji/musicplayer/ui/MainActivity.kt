@@ -7,11 +7,15 @@ import android.text.Html
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import android.window.OnBackInvokedDispatcher
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.androidji.musicplayer.R
 import com.androidji.musicplayer.data.ViewPagerFragment
 import com.androidji.musicplayer.databinding.ActivityMainBinding
@@ -42,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
         apiCalls()
 
-//        listeners()
+        listeners()
 
     }
 
@@ -74,6 +78,7 @@ class MainActivity : AppCompatActivity() {
 //            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
 //            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
 //        })
+        binding.motionLayout.views = arrayListOf(binding.viewPager,binding.fragmentSongPlayer)
 
     }
 
@@ -83,6 +88,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun observer() {
         vm.currentSongId.observe(this) {
+            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
             openPlayerFragment()
         }
     }
@@ -90,30 +96,31 @@ class MainActivity : AppCompatActivity() {
     fun openPlayerFragment() {
         binding.fragmentSongPlayer.visibility = View.VISIBLE
         if(stateExpanded) {
-//            binding.motionLayout.transitionToEnd()
+            binding.motionLayout.transitionToEnd()
         } else {
-//            binding.motionLayout.transitionToStart()
+            binding.motionLayout.transitionToStart()
         }
     }
 
-    class NonTouchableMotionLayout(context: Context, attrs: AttributeSet? = null) :
-        MotionLayout(context, attrs) {
-
-        override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-            return false
+    private fun listeners() {
+        binding.fragmentSongPlayer.setOnClickListener {
+            openPlayerFragment()
         }
     }
+}
 
-
-//    private fun listeners() {
-//        binding.motionLayout.transitionToEnd()
-//        binding.buttonPlay.setOnClickListener {
-//            Toast.makeText(this, stateExpanded.toString(), Toast.LENGTH_SHORT).show()
-//            if(stateExpanded) {
-//                binding.motionLayout.transitionToEnd()
-//            } else {
-//                binding.motionLayout.transitionToStart()
-//            }
-//            stateExpanded = !stateExpanded
-//        }
+class CustomMotionLayout(context: Context, attrs: AttributeSet?) : MotionLayout(context, attrs) {
+    var views: ArrayList<ViewGroup>? = null  // Reference to the RecyclerView
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        views?.forEach {
+            it.onInterceptTouchEvent(ev)
+        }
+        return super.onInterceptTouchEvent(ev)
+    }
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        views?.forEach {
+            it.onTouchEvent(event)
+        }
+        return super.onTouchEvent(event)
+    }
 }
