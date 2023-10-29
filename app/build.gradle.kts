@@ -62,4 +62,8 @@ dependencies {
     //    Using for background setting
     implementation("jp.wasabeef:glide-transformations:4.3.0")
 
+    //    Using for music playback
+    implementation("com.google.android.exoplayer:exoplayer:2.19.1")
+    implementation("com.google.android.exoplayer:exoplayer-ui:2.19.1")
+
 }
