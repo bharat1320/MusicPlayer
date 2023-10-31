@@ -43,7 +43,7 @@ class RvSongsAdapter(var context: Context,
             binding.itemSongSinger.text = it.artist ?: ""
             Glide.with(context).load(it.getImageUrl()).circleCrop().into(binding.itemCoverImage)
             holder.itemView.setOnClickListener { view ->
-                listener(CurrentSong(it,it.id?:0))
+                listener(CurrentSong(it,position))
             }
         }
     }

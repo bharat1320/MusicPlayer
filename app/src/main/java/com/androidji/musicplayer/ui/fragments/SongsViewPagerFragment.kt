@@ -6,24 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.androidji.musicplayer.R
 import com.androidji.musicplayer.data.CurrentSong
 import com.androidji.musicplayer.databinding.FragmentSongsViewPagerBinding
-import com.androidji.musicplayer.ui.adapters.RvSongsAdapter
+import com.androidji.musicplayer.ui.adapters.RvSongPlayerAdapter
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
 
 class SongsViewPagerFragment : Fragment() {
     lateinit var binding: FragmentSongsViewPagerBinding
+    lateinit var songsAdapter : RvSongPlayerAdapter
     lateinit var vm : MainViewModel
-    lateinit var songsRvAdapter : RvSongsAdapter
-    private var isTopTracks: Boolean? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            isTopTracks = it.getBoolean(IS_TOP_TRACKS,false)
-        }
-    }
+    lateinit var pageChangeCallback  : OnPageChangeCallback
+    var skipPageSelectedCallback = 2  //
+    var skipCurrentSongCallback = false
+    val pageMarginPx by lazy { resources.getDimensionPixelOffset(R.dimen.pageMargin) }
+    val offsetPx  by lazy { resources.getDimensionPixelOffset(R.dimen.offset) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,41 +34,73 @@ class SongsViewPagerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         vm = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
         init()
 
         observer()
-
     }
 
-    private fun init() {
-        songsRvAdapter = RvSongsAdapter(requireContext(), arrayListOf()) {
-            vm.currentSong.postValue(it)
-        }
-        binding.rvSongList.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = songsRvAdapter
-        }
-    }
-
-    private fun observer() {
-        vm.songsList.observe(requireActivity()) {
-            if(isTopTracks == true) {
-                it.data.filter { it.topTrack == true }
-            }
-            songsRvAdapter.refreshData(it.data)
-        }
-    }
-
-    companion object {
-        private const val IS_TOP_TRACKS = "IS_TOP_TRACKS"
-        @JvmStatic
-        fun newInstance(isTopTracks: Boolean) =
-            SongsViewPagerFragment().apply {
-                arguments = Bundle().apply {
-                    putBoolean(IS_TOP_TRACKS, isTopTracks)
+    fun init() {
+        pageChangeCallback = (object : OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                if(skipPageSelectedCallback != 0) {
+                    skipPageSelectedCallback--
+                } else {
+                    vm.songsList.value?.data?.get(position)?.let {
+                        skipCurrentSongCallback = true
+                        vm.currentSong.postValue(CurrentSong(it, position))
+                    }
                 }
             }
+        })
+        binding.rvSongs.registerOnPageChangeCallback(pageChangeCallback)
+
+        songsAdapter = RvSongPlayerAdapter(requireContext(), arrayListOf())
+
+        binding.rvSongs.apply {
+            adapter = songsAdapter
+            clipToPadding = false
+            clipChildren = false
+            offscreenPageLimit = 2
+
+            setPageTransformer(MarginPageTransformer(pageMarginPx))
+        }
+        setViewPagerState(false)
+    }
+
+    fun observer() {
+        vm.currentSong.observe(requireActivity()) {
+            if(skipCurrentSongCallback) {
+                skipCurrentSongCallback = false
+            } else {
+                binding.rvSongs.currentItem = it.position
+            }
+        }
+
+        vm.songsList.observe(requireActivity()) {
+            songsAdapter.refreshData(it.data)
+        }
+
+        vm.stateOpened.observe(viewLifecycleOwner) {
+            setViewPagerState(it)
+        }
+    }
+
+    fun setViewPagerState(opened :Boolean = true) {
+        binding.rvSongs.apply {
+            if(opened) {
+                setPadding(offsetPx, 0, offsetPx, 0)
+            } else {
+                setPadding(0, 0, 0, 0)
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        binding.rvSongs.unregisterOnPageChangeCallback(pageChangeCallback)
+        super.onDestroy()
     }
 }

@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
@@ -22,8 +21,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_songs"
+<!--    <androidx.viewpager2.widget.ViewPager2-->
+<!--        android:id="@+id/rv_songs"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:contentDescription="@string/songs_view"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/constraint_song_detail"-->
+<!--        app:layout_constraintDimensionRatio="1,1.4"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        android:layout_marginTop="@dimen/_20dp"-->
+<!--        app:layout_constraintVertical_chainStyle="spread" />-->
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_songs"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:contentDescription="@string/songs_view"
@@ -31,8 +41,7 @@
         app:layout_constraintDimensionRatio="1,1.4"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="@dimen/_20dp"
-        app:layout_constraintVertical_chainStyle="spread"
-        tools:listitem="@layout/rv_song_player_item" />
+        app:layout_constraintVertical_chainStyle="spread" />
 
     <LinearLayout
         android:id="@+id/constraint_song_detail"
@@ -43,7 +52,7 @@
         app:layout_constraintBottom_toBottomOf="@id/constraint_song_seek_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_songs">
+        app:layout_constraintTop_toBottomOf="@id/fragment_songs">
 
         <TextView
             android:id="@+id/item_song_name"

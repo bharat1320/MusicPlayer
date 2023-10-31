@@ -20,4 +20,7 @@
     <dimen name="_64dp">64dp</dimen>
     <dimen name="_16dp">16dp</dimen>
 
+    <dimen name="pageMargin">16dp</dimen>
+    <dimen name="offset">40dp</dimen>
+
 </resources>
