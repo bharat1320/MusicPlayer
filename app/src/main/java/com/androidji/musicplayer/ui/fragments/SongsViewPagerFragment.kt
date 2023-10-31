@@ -19,7 +19,6 @@ class SongsViewPagerFragment : Fragment() {
     lateinit var songsAdapter : RvSongPlayerAdapter
     lateinit var vm : MainViewModel
     lateinit var pageChangeCallback  : OnPageChangeCallback
-    var skipPageSelectedCallback = 2  //
     var skipCurrentSongCallback = false
     val pageMarginPx by lazy { resources.getDimensionPixelOffset(R.dimen.pageMargin) }
     val offsetPx  by lazy { resources.getDimensionPixelOffset(R.dimen.offset) }
@@ -46,13 +45,9 @@ class SongsViewPagerFragment : Fragment() {
         pageChangeCallback = (object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if(skipPageSelectedCallback != 0) {
-                    skipPageSelectedCallback--
-                } else {
-                    vm.songsList.value?.data?.get(position)?.let {
-                        skipCurrentSongCallback = true
-                        vm.currentSong.postValue(CurrentSong(it, position))
-                    }
+                vm.songsList.value?.data?.get(position)?.let {
+                    skipCurrentSongCallback = true
+                    vm.currentSong.postValue(CurrentSong(it, position))
                 }
             }
         })

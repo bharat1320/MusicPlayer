@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun listeners() {
         binding.fragmentSongPlayer.setOnClickListener {
-            openPlayerFragment()
+            vm.stateOpened.postValue(true)
         }
     }
 

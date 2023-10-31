@@ -7,6 +7,9 @@
     <dimen name="_22sp">22sp</dimen>
 
     <!--    dimensions-->
+    <dimen name="pageMargin">16dp</dimen>
+    <dimen name="offset">40dp</dimen>
+
     <dimen name="_100dp">100dp</dimen>
     <dimen name="_48dp">48dp</dimen>
     <dimen name="_12dp">12dp</dimen>
@@ -19,8 +22,6 @@
     <dimen name="_44dp">44dp</dimen>
     <dimen name="_64dp">64dp</dimen>
     <dimen name="_16dp">16dp</dimen>
-
-    <dimen name="pageMargin">16dp</dimen>
-    <dimen name="offset">40dp</dimen>
+    <dimen name="_4dp">4dp</dimen>
 
 </resources>
