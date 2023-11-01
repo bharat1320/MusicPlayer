@@ -96,7 +96,15 @@ class MainActivity : AppCompatActivity() {
         vm.currentSong.observe(this) {
             binding.tabLayout.setBackgroundResource(R.color.black)
             binding.fragmentSongPlayer.visibility = View.VISIBLE
-            binding.tabLayoutConstraint.setBackgroundResource(R.color.black)
+            binding.tabLayout.setBackgroundResource(R.color.black)
+        }
+
+        binding.tabForYouConstraint.setOnClickListener {
+            binding.viewPager.currentItem = 0
+        }
+
+        binding.tabTopTracksConstraint.setOnClickListener {
+            binding.viewPager.currentItem = 1
         }
     }
 

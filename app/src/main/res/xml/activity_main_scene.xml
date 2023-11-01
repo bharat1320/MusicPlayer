@@ -16,7 +16,7 @@
             android:elevation="1dp"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_58dp"
-            motion:layout_constraintBottom_toTopOf="@id/tab_layout_constraint"
+            motion:layout_constraintBottom_toTopOf="@id/tab_layout"
             motion:layout_constraintVertical_bias="1.0"
             motion:layout_constraintTop_toTopOf="parent" />
     </ConstraintSet>
