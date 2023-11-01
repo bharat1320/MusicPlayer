@@ -1,6 +1,8 @@
 package com.androidji.musicplayer.ui.fragments
 
+import android.content.Context
 import android.graphics.Typeface
+import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -35,9 +37,27 @@ class SongPlayerFragment : Fragment() {
     lateinit var songsViewPagerFragment : SongsViewPagerFragment
     var isUpdating = false
     var isPlaying = false
+
     private lateinit var exoPlayer: ExoPlayer
     lateinit var playbackProgressRunnable : Runnable
     private val handler = Handler(Looper.getMainLooper())
+    private val afChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                pauseSong()
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                pauseSong()
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                pauseSong()
+            }
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                playSong()
+            }
+        }
+    }
+    lateinit var audioManager: AudioManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,6 +84,8 @@ class SongPlayerFragment : Fragment() {
 
     private fun init() {
         utils.replaceFragment(requireActivity(),binding.fragmentSongs.id, songsViewPagerFragment)
+
+        audioManager = requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         val extensionRendererMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
         val renderersFactory = DefaultRenderersFactory(requireActivity().applicationContext)
@@ -171,19 +193,26 @@ class SongPlayerFragment : Fragment() {
     }
 
     fun playSong(song :Song? = null) {
-        isPlaying = true
-        Glide.with(requireContext()).load(R.drawable.play_to_pause).into(binding.buttonPlay)
-        if(song == null) {
-            exoPlayer.play()
-            return
-        }
-        val mediaItem = MediaItem.fromUri(song.url ?: "")
-        exoPlayer.setMediaItem(mediaItem)
-        exoPlayer.prepare()
-        exoPlayer.playWhenReady = true
-        "0:00".let {
-            binding.songEndTimeStamp.text = it
-            binding.songRunningTimeStamp.text = it
+        val result = audioManager.requestAudioFocus(
+            afChangeListener,
+            AudioManager.STREAM_MUSIC,
+            AudioManager.AUDIOFOCUS_GAIN
+        )
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            isPlaying = true
+            Glide.with(requireContext()).load(R.drawable.play_to_pause).into(binding.buttonPlay)
+            if (song == null) {
+                exoPlayer.play()
+                return
+            }
+            val mediaItem = MediaItem.fromUri(song.url ?: "")
+            exoPlayer.setMediaItem(mediaItem)
+            exoPlayer.prepare()
+            exoPlayer.playWhenReady = true
+            "0:00".let {
+                binding.songEndTimeStamp.text = it
+                binding.songRunningTimeStamp.text = it
+            }
         }
     }
 
@@ -210,7 +239,12 @@ class SongPlayerFragment : Fragment() {
     }
 
     override fun onStop() {
-        super.onStop()
         handler.removeCallbacks(playbackProgressRunnable)
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        audioManager.abandonAudioFocus(afChangeListener)
+        super.onDestroy()
     }
 }
