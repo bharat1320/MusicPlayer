@@ -96,6 +96,10 @@ class MainActivity : AppCompatActivity() {
         vm.stateOpened.observe(this) {
             openPlayerFragment(it)
         }
+
+        vm.currentSong.observe(this) {
+            binding.fragmentSongPlayer.visibility = View.VISIBLE
+        }
     }
 
     private fun listeners() {
