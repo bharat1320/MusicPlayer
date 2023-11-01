@@ -1,7 +1,11 @@
 package com.androidji.musicplayer.ui.fragments
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
@@ -14,6 +18,7 @@ import android.widget.SeekBar
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.palette.graphics.Palette
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.androidji.musicplayer.R
 import com.androidji.musicplayer.data.Song
@@ -22,6 +27,8 @@ import com.androidji.musicplayer.ui.viewModels.MainViewModel
 import com.androidji.musicplayer.utils.utils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -143,11 +150,27 @@ class SongPlayerFragment : Fragment() {
         vm.currentSong.observe(requireActivity()) {
             binding.itemSongName.text = it.song.name
             binding.itemSongSinger.text = it.song.artist
+//            Glide.with(requireContext())
+//                .asBitmap()
+//                .load(it.song.getImageUrl())
+//                .apply(RequestOptions.bitmapTransform(BlurTransformation(25, 12)))
+//                .into(binding.background)
             Glide.with(requireContext())
                 .asBitmap()
                 .load(it.song.getImageUrl())
-                .apply(RequestOptions.bitmapTransform(BlurTransformation(25, 12)))
-                .into(binding.background)
+                .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    val palette = Palette.from(resource).generate()
+                    val dominantColor = palette.getDominantColor(Color.BLACK)
+                    val vibrantColor = palette.getVibrantColor(Color.BLACK)
+                    val gradientDrawable = GradientDrawable(
+                        GradientDrawable.Orientation.TOP_BOTTOM,
+                        intArrayOf(vibrantColor, dominantColor)
+                    )
+                    binding.background.background = gradientDrawable
+                }
+                override fun onLoadCleared(placeholder: Drawable?) {}
+            })
             playSong(it.song)
         }
 
@@ -193,27 +216,27 @@ class SongPlayerFragment : Fragment() {
     }
 
     fun playSong(song :Song? = null) {
-        val result = audioManager.requestAudioFocus(
-            afChangeListener,
-            AudioManager.STREAM_MUSIC,
-            AudioManager.AUDIOFOCUS_GAIN
-        )
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            isPlaying = true
-            Glide.with(requireContext()).load(R.drawable.play_to_pause).into(binding.buttonPlay)
-            if (song == null) {
-                exoPlayer.play()
-                return
-            }
-            val mediaItem = MediaItem.fromUri(song.url ?: "")
-            exoPlayer.setMediaItem(mediaItem)
-            exoPlayer.prepare()
-            exoPlayer.playWhenReady = true
-            "0:00".let {
-                binding.songEndTimeStamp.text = it
-                binding.songRunningTimeStamp.text = it
-            }
-        }
+//        val result = audioManager.requestAudioFocus(
+//            afChangeListener,
+//            AudioManager.STREAM_MUSIC,
+//            AudioManager.AUDIOFOCUS_GAIN
+//        )
+//        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+//            isPlaying = true
+//            Glide.with(requireContext()).load(R.drawable.play_to_pause).into(binding.buttonPlay)
+//            if (song == null) {
+//                exoPlayer.play()
+//                return
+//            }
+//            val mediaItem = MediaItem.fromUri(song.url ?: "")
+//            exoPlayer.setMediaItem(mediaItem)
+//            exoPlayer.prepare()
+//            exoPlayer.playWhenReady = true
+//            "0:00".let {
+//                binding.songEndTimeStamp.text = it
+//                binding.songRunningTimeStamp.text = it
+//            }
+//        }
     }
 
     fun pauseSong() {

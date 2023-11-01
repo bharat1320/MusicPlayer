@@ -68,4 +68,7 @@ dependencies {
 
     //    Morphing animation
     implementation("androidx.vectordrawable:vectordrawable-animated:1.1.0")
+
+    //    Dark gradient background
+    implementation("androidx.palette:palette-ktx:1.0.0")
 }

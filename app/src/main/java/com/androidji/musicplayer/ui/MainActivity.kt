@@ -1,9 +1,7 @@
 package com.androidji.musicplayer.ui
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.text.Html
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
@@ -12,14 +10,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.androidji.musicplayer.R
-import com.androidji.musicplayer.data.CurrentSong
 import com.androidji.musicplayer.data.ViewPagerFragment
 import com.androidji.musicplayer.databinding.ActivityMainBinding
 import com.androidji.musicplayer.ui.fragments.SongPlayerFragment
 import com.androidji.musicplayer.ui.fragments.HomeViewPagerFragment
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
 import com.androidji.musicplayer.utils.utils
-import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -100,6 +96,7 @@ class MainActivity : AppCompatActivity() {
         vm.currentSong.observe(this) {
             binding.tabLayout.setBackgroundResource(R.color.black)
             binding.fragmentSongPlayer.visibility = View.VISIBLE
+            binding.tabLayoutConstraint.setBackgroundResource(R.color.black)
         }
     }
 
