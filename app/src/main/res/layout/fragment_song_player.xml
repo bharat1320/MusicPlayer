@@ -68,7 +68,7 @@
             android:alpha="0.6"
             android:ellipsize="end"
             android:text="@string/hariharan"
-            android:textColor="@color/grey"
+            android:textColor="@color/white_50"
             android:fontFamily="@font/sf_pro_display_regular"
             android:textSize="@dimen/_16sp" />
     </LinearLayout>

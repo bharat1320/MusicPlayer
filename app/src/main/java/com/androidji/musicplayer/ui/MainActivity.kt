@@ -1,5 +1,6 @@
 package com.androidji.musicplayer.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.Html
@@ -9,6 +10,9 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.androidji.musicplayer.R
+import com.androidji.musicplayer.data.CurrentSong
 import com.androidji.musicplayer.data.ViewPagerFragment
 import com.androidji.musicplayer.databinding.ActivityMainBinding
 import com.androidji.musicplayer.ui.fragments.SongPlayerFragment
@@ -21,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var vm : MainViewModel
     lateinit var playerFragment: Fragment
+    lateinit var pageChangeCallback  : ViewPager2.OnPageChangeCallback
     var fragments = arrayListOf<ViewPagerFragment>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,9 +58,23 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = Html.fromHtml("<b>${fragments[position].name}</b>")
-        }.attach()
+        pageChangeCallback = (object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                if(position == 0) {
+                    binding.tabForYou.setTextColor(resources.getColor(R.color.white,null))
+                    binding.tabForYouDot.visibility = View.VISIBLE
+                    binding.tabTopTracks.setTextColor(resources.getColor(R.color.white_50,null))
+                    binding.tabTopTracksDot.visibility = View.GONE
+                } else {
+                    binding.tabForYou.setTextColor(resources.getColor(R.color.white_50,null))
+                    binding.tabForYouDot.visibility = View.GONE
+                    binding.tabTopTracks.setTextColor(resources.getColor(R.color.white,null))
+                    binding.tabTopTracksDot.visibility = View.VISIBLE
+                }
+            }
+        })
+        binding.viewPager.registerOnPageChangeCallback(pageChangeCallback)
 
         utils.replaceFragment(this,binding.fragmentSongPlayer.id, playerFragment)
 
@@ -91,6 +110,11 @@ class MainActivity : AppCompatActivity() {
         } else {
             binding.motionLayout.transitionToStart()
         }
+    }
+
+    override fun onDestroy() {
+        binding.viewPager.unregisterOnPageChangeCallback(pageChangeCallback)
+        super.onDestroy()
     }
 
     override fun onBackPressed() {

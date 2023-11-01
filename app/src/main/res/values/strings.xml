@@ -10,4 +10,6 @@
     <string name="rewind">Rewind</string>
     <string name="play_pause">Play/Pause</string>
     <string name="songs_view">Songs View</string>
+    <string name="for_you">For You</string>
+    <string name="top_tracks">Top Tracks</string>
 </resources>
