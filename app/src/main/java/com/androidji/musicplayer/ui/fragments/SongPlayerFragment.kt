@@ -38,8 +38,6 @@ class SongPlayerFragment : Fragment() {
     private lateinit var exoPlayer: ExoPlayer
     lateinit var playbackProgressRunnable : Runnable
     private val handler = Handler(Looper.getMainLooper())
-    lateinit var playToPauseAnim : AnimatedVectorDrawableCompat
-    lateinit var pauseToPlayAnim : AnimatedVectorDrawableCompat
 
     companion object {
     }
@@ -68,9 +66,6 @@ class SongPlayerFragment : Fragment() {
     }
 
     private fun init() {
-        playToPauseAnim = AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.play_to_pause)!!
-        pauseToPlayAnim = AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.pause_to_play)!!
-
         utils.replaceFragment(requireActivity(),binding.fragmentSongs.id, songsViewPagerFragment)
 
         val extensionRendererMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
@@ -198,8 +193,7 @@ class SongPlayerFragment : Fragment() {
     fun pauseSong() {
         isPlaying = false
         exoPlayer.pause()
-        binding.buttonPlay.setImageDrawable(playToPauseAnim)
-        Glide.with(requireContext()).load(playToPauseAnim).into(binding.buttonPlay)
+        Glide.with(requireContext()).load(R.drawable.play_to_pause).into(binding.buttonPlay)
     }
 
     fun convertMillisToTime(millis: Long): String {
