@@ -33,7 +33,7 @@
             android:id="@+id/fragment_songs_constraint"
             android:layout_width="@dimen/_48dp"
             android:layout_height="@dimen/_48dp"
-            android:layout_marginStart="@dimen/_18dp"
+            android:layout_marginStart="@dimen/_20dp"
             motion:layout_constraintVertical_chainStyle="spread"
             motion:layout_constraintTop_toTopOf="@+id/constraint_song_detail"
             motion:layout_constraintBottom_toBottomOf="@+id/constraint_song_detail"
@@ -79,11 +79,11 @@
             android:alpha="1" />
         <Constraint
             android:id="@+id/button_play"
-            android:layout_height="@dimen/_44dp"
+            android:layout_width="@dimen/_32dp"
+            android:layout_height="@dimen/_32dp"
             motion:layout_constraintTop_toTopOf="@+id/constraint_song_detail"
             motion:layout_constraintBottom_toBottomOf="@+id/constraint_song_detail"
             motion:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="@dimen/_44dp"
             android:layout_marginEnd="@dimen/_26dp" />
     </ConstraintSet>
 </MotionScene>

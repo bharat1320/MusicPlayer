@@ -1,5 +1,6 @@
 package com.androidji.musicplayer.ui.fragments
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -30,6 +31,7 @@ import java.util.concurrent.TimeUnit
 class SongPlayerFragment : Fragment() {
     lateinit var binding: FragmentSongPlayerBinding
     lateinit var vm : MainViewModel
+    lateinit var songsViewPagerFragment : SongsViewPagerFragment
     var isUpdating = false
     var isPlaying = false
     private lateinit var exoPlayer: ExoPlayer
@@ -37,7 +39,6 @@ class SongPlayerFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
 
     companion object {
-        private var songsViewPagerFragment = SongsViewPagerFragment()
     }
 
     override fun onCreateView(
@@ -52,6 +53,8 @@ class SongPlayerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         vm = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+
+        songsViewPagerFragment = SongsViewPagerFragment()
 
         init()
 
@@ -133,10 +136,12 @@ class SongPlayerFragment : Fragment() {
             if(it) {
                 binding.itemSongName.textSize = 22f
                 binding.itemSongSinger.visibility = View.VISIBLE
+                binding.itemSongName.setTypeface(null, Typeface.BOLD)
                 binding.layout.transitionToStart()
             } else {
                 binding.itemSongSinger.visibility = View.GONE
                 binding.itemSongName.textSize = 18f
+                binding.itemSongName.setTypeface(null, Typeface.NORMAL)
                 binding.layout.transitionToEnd()
             }
         }
