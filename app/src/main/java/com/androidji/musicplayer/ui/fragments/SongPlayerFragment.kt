@@ -3,19 +3,19 @@ package com.androidji.musicplayer.ui.fragments
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.androidji.musicplayer.R
 import com.androidji.musicplayer.data.Song
 import com.androidji.musicplayer.databinding.FragmentSongPlayerBinding
-import com.androidji.musicplayer.ui.adapters.RvSongPlayerAdapter
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
 import com.androidji.musicplayer.utils.utils
-import com.androidji.musicplayer.utils.utils.Companion.dpToPx
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.exoplayer2.DefaultRenderersFactory
@@ -29,13 +29,16 @@ import java.util.concurrent.TimeUnit
 
 class SongPlayerFragment : Fragment() {
     lateinit var binding: FragmentSongPlayerBinding
-    private var songsViewPagerFragment = SongsViewPagerFragment()
     lateinit var vm : MainViewModel
     var isUpdating = false
     var isPlaying = false
     private lateinit var exoPlayer: ExoPlayer
     lateinit var playbackProgressRunnable : Runnable
     private val handler = Handler(Looper.getMainLooper())
+
+    companion object {
+        private var songsViewPagerFragment = SongsViewPagerFragment()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -100,6 +103,17 @@ class SongPlayerFragment : Fragment() {
             binding.songRunningTimeStamp.text = convertMillisToTime(exoPlayer.currentPosition)
             handler.postDelayed(playbackProgressRunnable, 500)
         }
+
+        binding.layout.addTransitionListener(object : MotionLayout.TransitionListener{
+            override fun onTransitionStarted(motionLayout: MotionLayout?, startId: Int, endId: Int) {}
+            override fun onTransitionChange(motionLayout: MotionLayout?, startId: Int, endId: Int, progress: Float) {
+                if (binding.root.progress != 1f) {
+                    vm.animationOnProgress.postValue(binding.root.progress)
+                }
+            }
+            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {}
+            override fun onTransitionTrigger(motionLayout: MotionLayout?, triggerId: Int, positive: Boolean, progress: Float) {}
+        })
     }
 
     private fun observer() {

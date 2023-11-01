@@ -22,6 +22,7 @@ class SongsViewPagerFragment : Fragment() {
     var skipCurrentSongCallback = false
     val pageMarginPx by lazy { resources.getDimensionPixelOffset(R.dimen.pageMargin) }
     val offsetPx  by lazy { resources.getDimensionPixelOffset(R.dimen.offset) }
+    var newOffset = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,9 +62,9 @@ class SongsViewPagerFragment : Fragment() {
             clipChildren = false
             offscreenPageLimit = 2
 
+            setPadding(offsetPx, 0, offsetPx, 0)
             setPageTransformer(MarginPageTransformer(pageMarginPx))
         }
-        setViewPagerState(false)
     }
 
     fun observer() {
@@ -79,19 +80,12 @@ class SongsViewPagerFragment : Fragment() {
             songsAdapter.refreshData(it.data)
         }
 
-        vm.stateOpened.observe(viewLifecycleOwner) {
-            setViewPagerState(it)
+        vm.animationOnProgress.observe(requireActivity()) {
+            newOffset = offsetPx - (offsetPx * it).toInt()
+            binding.rvSongs.setPadding(newOffset, 0, newOffset, 0)
+            binding.rvSongs.currentItem = vm.currentSong.value?.position ?: 0
         }
-    }
 
-    fun setViewPagerState(opened :Boolean = true) {
-        binding.rvSongs.apply {
-            if(opened) {
-                setPadding(offsetPx, 0, offsetPx, 0)
-            } else {
-                setPadding(0, 0, 0, 0)
-            }
-        }
     }
 
     override fun onDestroy() {
