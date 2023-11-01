@@ -98,6 +98,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         vm.currentSong.observe(this) {
+            binding.tabLayout.setBackgroundResource(R.color.black)
             binding.fragmentSongPlayer.visibility = View.VISIBLE
         }
     }

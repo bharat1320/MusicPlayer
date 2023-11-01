@@ -85,7 +85,6 @@ class SongsViewPagerFragment : Fragment() {
             binding.rvSongs.setPadding(newOffset, 0, newOffset, 0)
             binding.rvSongs.currentItem = vm.currentSong.value?.position ?: 0
         }
-
     }
 
     override fun onDestroy() {
