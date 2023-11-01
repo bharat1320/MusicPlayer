@@ -12,7 +12,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.androidji.musicplayer.data.ViewPagerFragment
 import com.androidji.musicplayer.databinding.ActivityMainBinding
 import com.androidji.musicplayer.ui.fragments.SongPlayerFragment
-import com.androidji.musicplayer.ui.fragments.SongsRecyclerViewFragment
+import com.androidji.musicplayer.ui.fragments.HomeViewPagerFragment
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
 import com.androidji.musicplayer.utils.utils
 import com.google.android.material.tabs.TabLayoutMediator
@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         playerFragment = SongPlayerFragment()
-        fragments.add(ViewPagerFragment(SongsRecyclerViewFragment.newInstance(false),"For You"))
-        fragments.add(ViewPagerFragment(SongsRecyclerViewFragment.newInstance(true),"Top Tracks"))
+        fragments.add(ViewPagerFragment(HomeViewPagerFragment.newInstance(false),"For You"))
+        fragments.add(ViewPagerFragment(HomeViewPagerFragment.newInstance(true),"Top Tracks"))
         binding.viewPager.adapter = (object : FragmentStateAdapter(this) {
             override fun getItemCount() = fragments.size
             override fun createFragment(position: Int): Fragment {

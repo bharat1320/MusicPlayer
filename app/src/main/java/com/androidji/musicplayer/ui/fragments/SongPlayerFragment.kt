@@ -12,6 +12,7 @@ import android.widget.SeekBar
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.androidji.musicplayer.R
 import com.androidji.musicplayer.data.Song
 import com.androidji.musicplayer.databinding.FragmentSongPlayerBinding
@@ -37,6 +38,8 @@ class SongPlayerFragment : Fragment() {
     private lateinit var exoPlayer: ExoPlayer
     lateinit var playbackProgressRunnable : Runnable
     private val handler = Handler(Looper.getMainLooper())
+    lateinit var playToPauseAnim : AnimatedVectorDrawableCompat
+    lateinit var pauseToPlayAnim : AnimatedVectorDrawableCompat
 
     companion object {
     }
@@ -65,6 +68,9 @@ class SongPlayerFragment : Fragment() {
     }
 
     private fun init() {
+        playToPauseAnim = AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.play_to_pause)!!
+        pauseToPlayAnim = AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.pause_to_play)!!
+
         utils.replaceFragment(requireActivity(),binding.fragmentSongs.id, songsViewPagerFragment)
 
         val extensionRendererMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
@@ -174,7 +180,7 @@ class SongPlayerFragment : Fragment() {
 
     fun playSong(song :Song? = null) {
         isPlaying = true
-        Glide.with(requireContext()).load(R.drawable.ic_pause).into(binding.buttonPlay)
+        Glide.with(requireContext()).load(R.drawable.pause_to_play).into(binding.buttonPlay)
         if(song == null) {
             exoPlayer.play()
             return
@@ -187,13 +193,13 @@ class SongPlayerFragment : Fragment() {
             binding.songEndTimeStamp.text = it
             binding.songRunningTimeStamp.text = it
         }
-
     }
 
     fun pauseSong() {
         isPlaying = false
         exoPlayer.pause()
-        Glide.with(requireContext()).load(R.drawable.ic_play).into(binding.buttonPlay)
+        binding.buttonPlay.setImageDrawable(playToPauseAnim)
+        Glide.with(requireContext()).load(playToPauseAnim).into(binding.buttonPlay)
     }
 
     fun convertMillisToTime(millis: Long): String {

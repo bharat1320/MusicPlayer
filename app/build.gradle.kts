@@ -16,6 +16,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -66,4 +67,6 @@ dependencies {
     implementation("com.google.android.exoplayer:exoplayer:2.19.1")
     implementation("com.google.android.exoplayer:exoplayer-ui:2.19.1")
 
+    //    Morphing animation
+    implementation("androidx.vectordrawable:vectordrawable-animated:1.1.0")
 }
