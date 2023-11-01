@@ -12,19 +12,36 @@
     </Transition>
 
     <ConstraintSet android:id="@+id/start">
-
+        <Constraint
+            android:id="@+id/fragment_songs_constraint"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/_18dp"
+            android:layout_marginTop="@dimen/_20dp"
+            motion:layout_constraintBottom_toTopOf="@id/constraint_song_detail"
+            motion:layout_constraintDimensionRatio="1,1.4"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintVertical_chainStyle="spread" >
+            <CustomAttribute
+                motion:attributeName="customCornerRadius"
+                motion:customFloatValue="0" />
+        </Constraint>
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
         <Constraint
-            android:id="@+id/fragment_songs"
+            android:id="@+id/fragment_songs_constraint"
             android:layout_width="@dimen/_48dp"
             android:layout_height="@dimen/_48dp"
             android:layout_marginStart="@dimen/_18dp"
             motion:layout_constraintVertical_chainStyle="spread"
             motion:layout_constraintTop_toTopOf="@+id/constraint_song_detail"
             motion:layout_constraintBottom_toBottomOf="@+id/constraint_song_detail"
-            motion:layout_constraintStart_toStartOf="parent" />
+            motion:layout_constraintStart_toStartOf="parent" >
+            <CustomAttribute
+                motion:attributeName="customCornerRadius"
+                motion:customFloatValue="100" />
+        </Constraint>
         <Constraint
             android:id="@+id/constraint_song_detail"
             android:layout_width="wrap_content"
@@ -32,7 +49,7 @@
             android:layout_marginStart="@dimen/_16dp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintTop_toTopOf="parent"
-            motion:layout_constraintStart_toEndOf="@id/fragment_songs" />
+            motion:layout_constraintStart_toEndOf="@id/fragment_songs_constraint" />
         <Constraint
             android:id="@+id/constraint_song_seek_bar"
             android:visibility="gone"
