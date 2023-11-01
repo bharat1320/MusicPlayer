@@ -172,7 +172,7 @@ class SongPlayerFragment : Fragment() {
 
     fun playSong(song :Song? = null) {
         isPlaying = true
-        Glide.with(requireContext()).load(R.drawable.pause_to_play).into(binding.buttonPlay)
+        Glide.with(requireContext()).load(R.drawable.play_to_pause).into(binding.buttonPlay)
         if(song == null) {
             exoPlayer.play()
             return
@@ -190,7 +190,7 @@ class SongPlayerFragment : Fragment() {
     fun pauseSong() {
         isPlaying = false
         exoPlayer.pause()
-        Glide.with(requireContext()).load(R.drawable.play_to_pause).into(binding.buttonPlay)
+        Glide.with(requireContext()).load(R.drawable.pause_to_play).into(binding.buttonPlay)
     }
 
     fun convertMillisToTime(millis: Long): String {
