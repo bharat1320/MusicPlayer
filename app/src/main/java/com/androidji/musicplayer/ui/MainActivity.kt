@@ -21,7 +21,7 @@ import com.androidji.musicplayer.utils.HelperUtils
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var vm : MainViewModel
-    lateinit var playerFragment: Fragment
+    lateinit var playerFragment: SongPlayerFragment
     lateinit var pageChangeCallback  : ViewPager2.OnPageChangeCallback
     var fragments = arrayListOf<ViewPagerFragment>()
 
@@ -87,7 +87,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun observer() {
         vm.stateOpened.observe(this) {
-            openPlayerFragment(it)
+            if(it) {
+                binding.motionLayout.transitionToEnd()
+            } else {
+                binding.motionLayout.transitionToStart()
+            }
         }
 
         vm.currentSong.observe(this) {
@@ -108,14 +112,6 @@ class MainActivity : AppCompatActivity() {
     private fun listeners() {
         binding.fragmentSongPlayer.setOnClickListener {
             vm.stateOpened.postValue(true)
-        }
-    }
-
-    fun openPlayerFragment(stateOpen: Boolean = true) {
-        if(stateOpen) {
-            binding.motionLayout.transitionToEnd()
-        } else {
-            binding.motionLayout.transitionToStart()
         }
     }
 

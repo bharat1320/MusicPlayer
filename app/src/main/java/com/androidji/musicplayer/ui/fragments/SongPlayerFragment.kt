@@ -142,11 +142,18 @@ class SongPlayerFragment : Fragment() {
         }
 
         binding.layout.addTransitionListener(object : MotionLayout.TransitionListener{
-            override fun onTransitionStarted(motionLayout: MotionLayout?, startId: Int, endId: Int) {}
+            override fun onTransitionStarted(motionLayout: MotionLayout?, startId: Int, endId: Int) {
+                vm.animationCompleted.postValue(false)
+            }
             override fun onTransitionChange(motionLayout: MotionLayout?, startId: Int, endId: Int, progress: Float) {
                 vm.animationOnProgress.postValue(binding.root.progress)
             }
-            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {}
+            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+                HelperUtils.doInBackground {
+                    Thread.sleep(500)
+                    vm.animationCompleted.postValue(true)
+                }
+            }
             override fun onTransitionTrigger(motionLayout: MotionLayout?, triggerId: Int, positive: Boolean, progress: Float) {}
         })
     }
