@@ -18,6 +18,4 @@ class MainViewModel: ViewModel() {
 
     var animationOnProgress : MutableLiveData<Float> = MutableLiveData()
 
-    var viewPagerState : MutableLiveData<Fragment> = MutableLiveData()
-
 }

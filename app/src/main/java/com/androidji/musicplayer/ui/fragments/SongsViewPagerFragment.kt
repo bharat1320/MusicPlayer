@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
@@ -13,6 +14,7 @@ import com.androidji.musicplayer.data.CurrentSong
 import com.androidji.musicplayer.databinding.FragmentSongsViewPagerBinding
 import com.androidji.musicplayer.ui.adapters.RvSongPlayerAdapter
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
+import com.bumptech.glide.Glide
 
 class SongsViewPagerFragment : Fragment() {
     lateinit var binding: FragmentSongsViewPagerBinding
@@ -46,9 +48,12 @@ class SongsViewPagerFragment : Fragment() {
         pageChangeCallback = (object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                vm.songsList.value?.data?.get(position)?.let {
-                    skipCurrentSongCallback = true
-                    vm.currentSong.postValue(CurrentSong(it, position))
+                if(vm.animationOnProgress.value == 1f) {
+                    vm.songsList.value?.data?.get(position)?.let {
+                        skipCurrentSongCallback = true
+                        vm.currentSong.postValue(CurrentSong(it, position))
+                        Toast.makeText(requireContext(), "${it.name}", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         })
@@ -65,13 +70,23 @@ class SongsViewPagerFragment : Fragment() {
             setPadding(offsetPx, 0, offsetPx, 0)
             setPageTransformer(MarginPageTransformer(pageMarginPx))
         }
+        binding.imageBg.setPadding(offsetPx, 0, offsetPx, 0)
     }
 
     fun observer() {
+        vm.stateOpened.observe(requireActivity()) {
+            if(it) {
+                binding.imageBg.visibility = View.GONE
+            } else {
+                binding.imageBg.visibility = View.VISIBLE
+            }
+        }
+
         vm.currentSong.observe(requireActivity()) {
             if(skipCurrentSongCallback) {
                 skipCurrentSongCallback = false
             } else {
+                Glide.with(requireContext()).load(it.song.getImageUrl()).into(binding.imageBg)
                 binding.rvSongs.currentItem = it.position
             }
         }
@@ -83,7 +98,7 @@ class SongsViewPagerFragment : Fragment() {
         vm.animationOnProgress.observe(requireActivity()) {
             newOffset = offsetPx - (offsetPx * it).toInt()
             binding.rvSongs.setPadding(newOffset, 0, newOffset, 0)
-            binding.rvSongs.currentItem = vm.currentSong.value?.position ?: 0
+            binding.imageBg.setPadding(newOffset, 0, newOffset, 0)
         }
     }
 

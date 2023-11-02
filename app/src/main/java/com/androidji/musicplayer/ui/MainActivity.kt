@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var playerFragment: Fragment
     lateinit var pageChangeCallback  : ViewPager2.OnPageChangeCallback
     var fragments = arrayListOf<ViewPagerFragment>()
-    lateinit var songsViewPagerFragment : SongsViewPagerFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +48,6 @@ class MainActivity : AppCompatActivity() {
         playerFragment = SongPlayerFragment()
 
         binding.fragmentSongPlayer.visibility = View.GONE
-
-        songsViewPagerFragment = SongsViewPagerFragment()
-
-        vm.viewPagerState.postValue(songsViewPagerFragment)
 
         fragments.add(ViewPagerFragment(HomeViewPagerFragment.newInstance(false),"For You"))
         fragments.add(ViewPagerFragment(HomeViewPagerFragment.newInstance(true),"Top Tracks"))
@@ -84,13 +79,6 @@ class MainActivity : AppCompatActivity() {
         binding.viewPager.registerOnPageChangeCallback(pageChangeCallback)
 
         HelperUtils.replaceFragment(this,binding.fragmentSongPlayer.id, playerFragment)
-
-        binding.motionLayout.setTransitionListener(object : MotionLayout.TransitionListener {
-            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
-            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {}
-            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
-            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
-        })
     }
 
     private fun apiCalls() {

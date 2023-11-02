@@ -43,15 +43,18 @@ import java.util.concurrent.TimeUnit
 class SongPlayerFragment : Fragment() {
     lateinit var binding: FragmentSongPlayerBinding
     lateinit var vm : MainViewModel
-    private lateinit var playerNotificationManager: PlayerNotificationManager
+
     var isPlaying = false
     var cacheImage : CacheImage? = null
     var playbackTimeMillis = 0L
+    private lateinit var playerNotificationManager: PlayerNotificationManager
+    lateinit var songsViewPagerFragment : SongsViewPagerFragment
 
     val CHANNEL_ID = "your_channel_id"
     val NOTIFICATION_ID = 1
 
     private lateinit var exoPlayer: ExoPlayer
+    lateinit var audioManager: AudioManager
     lateinit var playbackProgressRunnable : Runnable
     private val handler = Handler(Looper.getMainLooper())
     private val afChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
@@ -70,7 +73,6 @@ class SongPlayerFragment : Fragment() {
             }
         }
     }
-    lateinit var audioManager: AudioManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,6 +96,7 @@ class SongPlayerFragment : Fragment() {
     }
 
     private fun init() {
+        songsViewPagerFragment = SongsViewPagerFragment()
 
         audioManager = requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -141,9 +144,7 @@ class SongPlayerFragment : Fragment() {
         binding.layout.addTransitionListener(object : MotionLayout.TransitionListener{
             override fun onTransitionStarted(motionLayout: MotionLayout?, startId: Int, endId: Int) {}
             override fun onTransitionChange(motionLayout: MotionLayout?, startId: Int, endId: Int, progress: Float) {
-                if (binding.root.progress != 1f) {
-                    vm.animationOnProgress.postValue(binding.root.progress)
-                }
+                vm.animationOnProgress.postValue(binding.root.progress)
             }
             override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {}
             override fun onTransitionTrigger(motionLayout: MotionLayout?, triggerId: Int, positive: Boolean, progress: Float) {}
@@ -192,13 +193,12 @@ class SongPlayerFragment : Fragment() {
             }
         }
 
-        vm.viewPagerState.observe(requireActivity()) {
-            HelperUtils.replaceFragment(requireActivity(),binding.fragmentSongs.id, it)
-        }
+        HelperUtils.replaceFragment(requireActivity(),binding.fragmentSongs.id, songsViewPagerFragment)
     }
 
     private fun listeners() {
         binding.buttonPlay.setOnClickListener {
+            HelperUtils.giveHapticFeedback(requireActivity())
             if(isPlaying) pauseSong() else playSong()
         }
 
@@ -218,31 +218,6 @@ class SongPlayerFragment : Fragment() {
 
         binding.buttonForward.setOnClickListener {
             exoPlayer.seekTo(exoPlayer.currentPosition + 10000)
-        }
-    }
-
-    fun playSong(song :Song? = null) {
-        val result = audioManager.requestAudioFocus(
-            afChangeListener,
-            AudioManager.STREAM_MUSIC,
-            AudioManager.AUDIOFOCUS_GAIN
-        )
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            isPlaying = true
-            Glide.with(requireContext()).load(R.drawable.play_to_pause).into(binding.buttonPlay)
-            if (song == null) {
-                exoPlayer.play()
-                return
-            }
-            val mediaItem = MediaItem.fromUri(song.url ?: "")
-            exoPlayer.setMediaItem(mediaItem)
-            exoPlayer.prepare()
-            exoPlayer.playWhenReady = true
-            "0:00".let {
-                binding.songEndTimeStamp.text = it
-                binding.songRunningTimeStamp.text = it
-            }
-            HelperUtils.giveHapticFeedback(requireActivity())
         }
     }
 
@@ -331,10 +306,33 @@ class SongPlayerFragment : Fragment() {
         return Bitmap.createBitmap(bitmap, x, y, size, size)
     }
 
+    fun playSong(song :Song? = null) {
+        val result = audioManager.requestAudioFocus(
+            afChangeListener,
+            AudioManager.STREAM_MUSIC,
+            AudioManager.AUDIOFOCUS_GAIN
+        )
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            isPlaying = true
+            Glide.with(requireContext()).load(R.drawable.play_to_pause).into(binding.buttonPlay)
+            if (song == null) {
+                exoPlayer.play()
+                return
+            }
+            val mediaItem = MediaItem.fromUri(song.url ?: "")
+            exoPlayer.setMediaItem(mediaItem)
+            exoPlayer.prepare()
+            exoPlayer.playWhenReady = true
+            "0:00".let {
+                binding.songEndTimeStamp.text = it
+                binding.songRunningTimeStamp.text = it
+            }
+        }
+    }
+
     fun pauseSong() {
         isPlaying = false
         exoPlayer.pause()
-        HelperUtils.giveHapticFeedback(requireActivity())
         Glide.with(requireContext()).load(R.drawable.pause_to_play).into(binding.buttonPlay)
     }
 
