@@ -62,11 +62,13 @@ class MainActivity : AppCompatActivity() {
                     binding.tabForYouDot.visibility = View.VISIBLE
                     binding.tabTopTracks.setTextColor(resources.getColor(R.color.white_50,null))
                     binding.tabTopTracksDot.visibility = View.GONE
+                    utils.giveHapticFeedback(this@MainActivity)
                 } else {
                     binding.tabForYou.setTextColor(resources.getColor(R.color.white_50,null))
                     binding.tabForYouDot.visibility = View.GONE
                     binding.tabTopTracks.setTextColor(resources.getColor(R.color.white,null))
                     binding.tabTopTracksDot.visibility = View.VISIBLE
+                    utils.giveHapticFeedback(this@MainActivity)
                 }
             }
         })

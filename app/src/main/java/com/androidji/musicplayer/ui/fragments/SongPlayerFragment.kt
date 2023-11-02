@@ -239,6 +239,7 @@ class SongPlayerFragment : Fragment() {
                 binding.songEndTimeStamp.text = it
                 binding.songRunningTimeStamp.text = it
             }
+            utils.giveHapticFeedback(requireActivity())
         }
     }
 
@@ -330,6 +331,7 @@ class SongPlayerFragment : Fragment() {
     fun pauseSong() {
         isPlaying = false
         exoPlayer.pause()
+        utils.giveHapticFeedback(requireActivity())
         Glide.with(requireContext()).load(R.drawable.pause_to_play).into(binding.buttonPlay)
     }
 
