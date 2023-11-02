@@ -51,7 +51,7 @@ class SongsViewPagerFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 if(!listenPagerCallback && (vm.animationOnProgress.value ?: 1f) == 1f ) {
-                    vm.songsList.value?.data?.get(position)?.let {
+                    vm.currentSongPlaylist.value?.get(position)?.let {
                         skipCurrentSongCallback = true
                         vm.currentSong.postValue(CurrentSong(it, position))
                         Toast.makeText(requireContext(), "${it.name}", Toast.LENGTH_SHORT).show()
@@ -85,8 +85,8 @@ class SongsViewPagerFragment : Fragment() {
             }
         }
 
-        vm.songsList.observe(requireActivity()) {
-            songsAdapter.refreshData(it.data)
+        vm.currentSongPlaylist.observe(requireActivity()) {
+            songsAdapter.refreshData(it)
         }
 
         vm.animationOnProgress.observe(requireActivity()) {

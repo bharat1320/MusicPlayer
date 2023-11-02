@@ -17,6 +17,8 @@ class HomeViewPagerFragment : Fragment() {
     lateinit var vm : MainViewModel
     lateinit var songsRvAdapter : RvSongsAdapter
     private var isTopTracks: Boolean? = null
+    private var isUpdatedByMe: Boolean = false
+    lateinit var data : ArrayList<Song>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +47,7 @@ class HomeViewPagerFragment : Fragment() {
 
     private fun init() {
         songsRvAdapter = RvSongsAdapter(requireContext(), arrayListOf()) {
+            vm.currentSongPlaylist.postValue(songsRvAdapter.songs)
             vm.currentSong.postValue(it)
             vm.stateOpened.postValue(true)
         }
@@ -57,11 +60,12 @@ class HomeViewPagerFragment : Fragment() {
 
     private fun observer() {
         vm.songsList.observe(requireActivity()) {
-            if(isTopTracks == true) {
+            if(isTopTracks == true && !isUpdatedByMe) {
                 songsRvAdapter.refreshData(it.data.filter { it.topTrack == true }.toMutableList() as ArrayList<Song>)
             } else {
                 songsRvAdapter.refreshData(it.data)
             }
+            isUpdatedByMe = false
         }
     }
 
