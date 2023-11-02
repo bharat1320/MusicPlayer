@@ -1,5 +1,6 @@
 package com.androidji.musicplayer.ui.viewModels
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.androidji.musicplayer.data.CurrentSong
@@ -16,4 +17,7 @@ class MainViewModel: ViewModel() {
     var stateOpened : MutableLiveData<Boolean> = MutableLiveData()
 
     var animationOnProgress : MutableLiveData<Float> = MutableLiveData()
+
+    var viewPagerState : MutableLiveData<Fragment> = MutableLiveData()
+
 }

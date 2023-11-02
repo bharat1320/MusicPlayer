@@ -43,10 +43,10 @@ import java.util.concurrent.TimeUnit
 class SongPlayerFragment : Fragment() {
     lateinit var binding: FragmentSongPlayerBinding
     lateinit var vm : MainViewModel
-    lateinit var songsViewPagerFragment : SongsViewPagerFragment
     private lateinit var playerNotificationManager: PlayerNotificationManager
     var isPlaying = false
     var cacheImage : CacheImage? = null
+    var playbackTimeMillis = 0L
 
     val CHANNEL_ID = "your_channel_id"
     val NOTIFICATION_ID = 1
@@ -85,8 +85,6 @@ class SongPlayerFragment : Fragment() {
 
         vm = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
-        songsViewPagerFragment = SongsViewPagerFragment()
-
         init()
 
         observer()
@@ -96,7 +94,6 @@ class SongPlayerFragment : Fragment() {
     }
 
     private fun init() {
-        HelperUtils.replaceFragment(requireActivity(),binding.fragmentSongs.id, songsViewPagerFragment)
 
         audioManager = requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -118,6 +115,7 @@ class SongPlayerFragment : Fragment() {
                             Player.STATE_BUFFERING -> {}
                             Player.STATE_READY -> {
                                 binding.songSeekbar.progress = 0
+                                playbackTimeMillis = exoPlayer.duration
                                 binding.songEndTimeStamp.text = convertMillisToTime(exoPlayer.duration)
                             }
                             Player.STATE_ENDED -> {
@@ -156,22 +154,26 @@ class SongPlayerFragment : Fragment() {
         vm.currentSong.observe(requireActivity()) {
             binding.itemSongName.text = it.song.name
             binding.itemSongSinger.text = it.song.artist
-            Glide.with(requireContext())
-                .asBitmap()
-                .load(it.song.getImageUrl())
-                .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    val palette = Palette.from(resource).generate()
-                    val dominantColor = palette.getDominantColor(Color.BLACK)
-                    val vibrantColor = palette.getVibrantColor(Color.BLACK)
-                    val gradientDrawable = GradientDrawable(
-                        GradientDrawable.Orientation.TOP_BOTTOM,
-                        intArrayOf(vibrantColor, dominantColor)
-                    )
-                    binding.background.background = gradientDrawable
-                }
-                override fun onLoadCleared(placeholder: Drawable?) {}
-            })
+            HelperUtils.doInBackground {
+                Glide.with(requireContext())
+                    .asBitmap()
+                    .load(it.song.getImageUrl())
+                    .into(object : CustomTarget<Bitmap>() {
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                            val palette = Palette.from(resource).generate()
+                            val dominantColor = palette.getDominantColor(Color.BLACK)
+                            val vibrantColor = palette.getVibrantColor(Color.BLACK)
+                            val gradientDrawable = GradientDrawable(
+                                GradientDrawable.Orientation.TOP_BOTTOM,
+                                intArrayOf(vibrantColor, dominantColor)
+                            )
+                            HelperUtils.doInMain {
+                                binding.background.background = gradientDrawable
+                            }
+                        }
+                        override fun onLoadCleared(placeholder: Drawable?) {}
+                    })
+            }
             playSong(it.song)
             createPlayerNotificationManager(requireActivity(),exoPlayer,it)
         }
@@ -190,6 +192,9 @@ class SongPlayerFragment : Fragment() {
             }
         }
 
+        vm.viewPagerState.observe(requireActivity()) {
+            HelperUtils.replaceFragment(requireActivity(),binding.fragmentSongs.id, it)
+        }
     }
 
     private fun listeners() {

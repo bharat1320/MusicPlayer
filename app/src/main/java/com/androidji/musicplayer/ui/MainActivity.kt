@@ -14,6 +14,7 @@ import com.androidji.musicplayer.data.ViewPagerFragment
 import com.androidji.musicplayer.databinding.ActivityMainBinding
 import com.androidji.musicplayer.ui.fragments.SongPlayerFragment
 import com.androidji.musicplayer.ui.fragments.HomeViewPagerFragment
+import com.androidji.musicplayer.ui.fragments.SongsViewPagerFragment
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
 import com.androidji.musicplayer.utils.HelperUtils
 
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var playerFragment: Fragment
     lateinit var pageChangeCallback  : ViewPager2.OnPageChangeCallback
     var fragments = arrayListOf<ViewPagerFragment>()
+    lateinit var songsViewPagerFragment : SongsViewPagerFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +47,13 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         playerFragment = SongPlayerFragment()
+
+        binding.fragmentSongPlayer.visibility = View.GONE
+
+        songsViewPagerFragment = SongsViewPagerFragment()
+
+        vm.viewPagerState.postValue(songsViewPagerFragment)
+
         fragments.add(ViewPagerFragment(HomeViewPagerFragment.newInstance(false),"For You"))
         fragments.add(ViewPagerFragment(HomeViewPagerFragment.newInstance(true),"Top Tracks"))
         binding.viewPager.adapter = (object : FragmentStateAdapter(this) {
@@ -82,8 +91,6 @@ class MainActivity : AppCompatActivity() {
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
             override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
         })
-
-        binding.fragmentSongPlayer.visibility = View.GONE
     }
 
     private fun apiCalls() {

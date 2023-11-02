@@ -1,7 +1,8 @@
 package com.androidji.musicplayer.utils
 
 import android.content.Context
-import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -35,6 +36,18 @@ class HelperUtils {
                         it.vibrate(80)
                     }
                 }
+            }
+        }
+
+        fun doInBackground(func : () -> Unit) {
+            CoroutineScope(Dispatchers.IO).launch {
+                func()
+            }
+        }
+
+        fun doInMain(func : () -> Unit) {
+            CoroutineScope(Dispatchers.Main).launch {
+                func()
             }
         }
     }
