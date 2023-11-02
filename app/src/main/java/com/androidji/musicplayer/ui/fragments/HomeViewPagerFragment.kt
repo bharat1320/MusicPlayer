@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.androidji.musicplayer.data.Song
 import com.androidji.musicplayer.databinding.FragmentHomeViewPagerFragmentBinding
 import com.androidji.musicplayer.ui.adapters.RvSongsAdapter
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
@@ -57,10 +58,10 @@ class HomeViewPagerFragment : Fragment() {
     private fun observer() {
         vm.songsList.observe(requireActivity()) {
             if(isTopTracks == true) {
-                val data = it.copy()
-                data.data.filter { it.topTrack == true }
+                songsRvAdapter.refreshData(it.data.filter { it.topTrack == true }.toMutableList() as ArrayList<Song>)
+            } else {
+                songsRvAdapter.refreshData(it.data)
             }
-            songsRvAdapter.refreshData(it.data)
         }
     }
 
