@@ -12,4 +12,6 @@
     <string name="songs_view">Songs View</string>
     <string name="for_you">For You</string>
     <string name="top_tracks">Top Tracks</string>
+    <string name="notification_channel_name">Music Player</string>
+    <string name="notification_channel_description">This is used to provide playback controls for you music</string>
 </resources>
