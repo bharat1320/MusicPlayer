@@ -22,6 +22,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.palette.graphics.Palette
 import com.androidji.musicplayer.R
+import com.androidji.musicplayer.data.CacheImage
+import com.androidji.musicplayer.data.CurrentSong
 import com.androidji.musicplayer.data.Song
 import com.androidji.musicplayer.databinding.FragmentSongPlayerBinding
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
@@ -36,7 +38,6 @@ import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import jp.wasabeef.glide.transformations.BlurTransformation
 import java.util.concurrent.TimeUnit
 
 class SongPlayerFragment : Fragment() {
@@ -46,6 +47,7 @@ class SongPlayerFragment : Fragment() {
     private lateinit var playerNotificationManager: PlayerNotificationManager
     var isUpdating = false
     var isPlaying = false
+    var cacheImage : CacheImage? = null
 
     val CHANNEL_ID = "your_channel_id"
     val NOTIFICATION_ID = 1
@@ -155,11 +157,6 @@ class SongPlayerFragment : Fragment() {
         vm.currentSong.observe(requireActivity()) {
             binding.itemSongName.text = it.song.name
             binding.itemSongSinger.text = it.song.artist
-//            Glide.with(requireContext())
-//                .asBitmap()
-//                .load(it.song.getImageUrl())
-//                .apply(RequestOptions.bitmapTransform(BlurTransformation(25, 12)))
-//                .into(binding.background)
             Glide.with(requireContext())
                 .asBitmap()
                 .load(it.song.getImageUrl())
@@ -177,6 +174,7 @@ class SongPlayerFragment : Fragment() {
                 override fun onLoadCleared(placeholder: Drawable?) {}
             })
             playSong(it.song)
+            createPlayerNotificationManager(requireActivity(),exoPlayer,it)
         }
 
         vm.stateOpened.observe(requireActivity()) {
@@ -241,72 +239,92 @@ class SongPlayerFragment : Fragment() {
                 binding.songEndTimeStamp.text = it
                 binding.songRunningTimeStamp.text = it
             }
-//            createNotification(exoPlayer)
-            createPlayerNotificationManager(requireActivity(),exoPlayer)
         }
     }
 
-    fun createPlayerNotificationManager(context: Context, exoPlayer: ExoPlayer) {
-        vm.currentSong.value?.let {
-            val mediaSession = MediaSessionCompat(context, "TAG")
+    fun createPlayerNotificationManager(
+        context: Context,
+        exoPlayer: ExoPlayer,
+        it: CurrentSong
+    ) {
+        val mediaSession = MediaSessionCompat(context, "TAG")
 
-            playerNotificationManager =
-                PlayerNotificationManager.Builder(context, NOTIFICATION_ID, CHANNEL_ID)
-                    .setChannelNameResourceId(R.string.notification_channel_name)
-                    .setChannelDescriptionResourceId(R.string.notification_channel_description)
-                    .setMediaDescriptionAdapter(object :
-                        PlayerNotificationManager.MediaDescriptionAdapter {
-                        override fun getCurrentContentTitle(player: Player): String {
-                            return it.song.name ?: ""
-                        }
+        playerNotificationManager =
+            PlayerNotificationManager.Builder(context, NOTIFICATION_ID, CHANNEL_ID)
+                .setChannelNameResourceId(R.string.notification_channel_name)
+                .setChannelDescriptionResourceId(R.string.notification_channel_description)
+                .setMediaDescriptionAdapter(object :
+                    PlayerNotificationManager.MediaDescriptionAdapter {
+                    override fun getCurrentContentTitle(player: Player): String {
+                        return it.song.name ?: ""
+                    }
 
-                        override fun createCurrentContentIntent(player: Player): PendingIntent? {
-                            return null
-                        }
+                    override fun createCurrentContentIntent(player: Player): PendingIntent? {
+                        return null
+                    }
 
-                        override fun getCurrentContentText(player: Player): String? {
-                            return it.song.artist ?: ""
-                        }
+                    override fun getCurrentContentText(player: Player): String? {
+                        return it.song.artist ?: ""
+                    }
 
-                        override fun getCurrentLargeIcon(
-                            player: Player,
-                            callback: PlayerNotificationManager.BitmapCallback
-                        ): Bitmap? {
-                            var bitmap : Bitmap? = null
+                    override fun getCurrentLargeIcon(
+                        player: Player,
+                        callback: PlayerNotificationManager.BitmapCallback
+                    ): Bitmap? {
+                        if(cacheImage == null || cacheImage?.imageId == it.song.id) {
+                            var bitmap: Bitmap? = null
                             Glide.with(requireContext())
                                 .asBitmap()
                                 .load(it.song.getImageUrl())
                                 .into(object : CustomTarget<Bitmap>() {
-                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                        bitmap = resource
+                                    override fun onResourceReady(
+                                        resource: Bitmap,
+                                        transition: Transition<in Bitmap>?
+                                    ) {
+                                        cacheImage = CacheImage(it.song.id ?: 0,resource)
+                                        bitmap = makeBitmapSquare(resource)
                                     }
+
                                     override fun onLoadCleared(placeholder: Drawable?) {}
                                 })
                             return bitmap
+                        } else {
+                            return cacheImage!!.image
                         }
-                    })
-                    .setNotificationListener(object :
-                        PlayerNotificationManager.NotificationListener {
-                        override fun onNotificationCancelled(
-                            notificationId: Int,
-                            dismissedByUser: Boolean
-                        ) {
-                            pauseSong()
-                        }
+                    }
+                })
+                .setNotificationListener(object :
+                    PlayerNotificationManager.NotificationListener {
+                    override fun onNotificationCancelled(
+                        notificationId: Int,
+                        dismissedByUser: Boolean
+                    ) {
+                        pauseSong()
+                    }
 
-                        override fun onNotificationPosted(
-                            notificationId: Int,
-                            notification: Notification,
-                            ongoing: Boolean
-                        ) {
-                            // Manage the notification posting, like starting or stopping the foreground service.
-                        }
-                    })
-                    .build()
+                    override fun onNotificationPosted(
+                        notificationId: Int,
+                        notification: Notification,
+                        ongoing: Boolean
+                    ) {
+                        // Manage the notification posting, like starting or stopping the foreground service.
+                    }
+                })
+                .build()
 
-            playerNotificationManager.setPlayer(exoPlayer)
-            playerNotificationManager.setMediaSessionToken(mediaSession.sessionToken)
-        }
+        playerNotificationManager.setPlayer(exoPlayer)
+        playerNotificationManager.setUseFastForwardAction(true)
+        playerNotificationManager.setUsePlayPauseActions(true)
+        playerNotificationManager.setUseNextAction(false)
+        playerNotificationManager.setUsePreviousAction(false)
+        playerNotificationManager.setMediaSessionToken(mediaSession.sessionToken)
+    }
+
+    fun makeBitmapSquare(bitmap: Bitmap): Bitmap {
+        val size = Math.min(bitmap.width, bitmap.height)
+        val x = (bitmap.width - size) / 2
+        val y = (bitmap.height - size) / 2
+        return Bitmap.createBitmap(bitmap, x, y, size, size)
     }
 
     fun pauseSong() {
