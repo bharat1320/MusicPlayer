@@ -5,12 +5,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.androidji.musicplayer.data.Song
 import com.androidji.musicplayer.databinding.RvSongPlayerItemBinding
-import com.androidji.musicplayer.utils.URLS
-import com.androidji.musicplayer.utils.utils.Companion.dpToPx
 import com.bumptech.glide.Glide
 
 class RvSongPlayerAdapter(var context: Context,

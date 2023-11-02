@@ -27,7 +27,7 @@ import com.androidji.musicplayer.data.CurrentSong
 import com.androidji.musicplayer.data.Song
 import com.androidji.musicplayer.databinding.FragmentSongPlayerBinding
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
-import com.androidji.musicplayer.utils.utils
+import com.androidji.musicplayer.utils.HelperUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -45,7 +45,6 @@ class SongPlayerFragment : Fragment() {
     lateinit var vm : MainViewModel
     lateinit var songsViewPagerFragment : SongsViewPagerFragment
     private lateinit var playerNotificationManager: PlayerNotificationManager
-    var isUpdating = false
     var isPlaying = false
     var cacheImage : CacheImage? = null
 
@@ -97,7 +96,7 @@ class SongPlayerFragment : Fragment() {
     }
 
     private fun init() {
-        utils.replaceFragment(requireActivity(),binding.fragmentSongs.id, songsViewPagerFragment)
+        HelperUtils.replaceFragment(requireActivity(),binding.fragmentSongs.id, songsViewPagerFragment)
 
         audioManager = requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -178,7 +177,6 @@ class SongPlayerFragment : Fragment() {
         }
 
         vm.stateOpened.observe(requireActivity()) {
-            isUpdating = true
             if(it) {
                 binding.itemSongName.textSize = 22f
                 binding.itemSongSinger.visibility = View.VISIBLE
@@ -239,7 +237,7 @@ class SongPlayerFragment : Fragment() {
                 binding.songEndTimeStamp.text = it
                 binding.songRunningTimeStamp.text = it
             }
-            utils.giveHapticFeedback(requireActivity())
+            HelperUtils.giveHapticFeedback(requireActivity())
         }
     }
 
@@ -331,7 +329,7 @@ class SongPlayerFragment : Fragment() {
     fun pauseSong() {
         isPlaying = false
         exoPlayer.pause()
-        utils.giveHapticFeedback(requireActivity())
+        HelperUtils.giveHapticFeedback(requireActivity())
         Glide.with(requireContext()).load(R.drawable.pause_to_play).into(binding.buttonPlay)
     }
 

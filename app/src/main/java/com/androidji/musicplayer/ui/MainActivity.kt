@@ -15,7 +15,7 @@ import com.androidji.musicplayer.databinding.ActivityMainBinding
 import com.androidji.musicplayer.ui.fragments.SongPlayerFragment
 import com.androidji.musicplayer.ui.fragments.HomeViewPagerFragment
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
-import com.androidji.musicplayer.utils.utils
+import com.androidji.musicplayer.utils.HelperUtils
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -62,19 +62,19 @@ class MainActivity : AppCompatActivity() {
                     binding.tabForYouDot.visibility = View.VISIBLE
                     binding.tabTopTracks.setTextColor(resources.getColor(R.color.white_50,null))
                     binding.tabTopTracksDot.visibility = View.GONE
-                    utils.giveHapticFeedback(this@MainActivity)
+                    HelperUtils.giveHapticFeedback(this@MainActivity)
                 } else {
                     binding.tabForYou.setTextColor(resources.getColor(R.color.white_50,null))
                     binding.tabForYouDot.visibility = View.GONE
                     binding.tabTopTracks.setTextColor(resources.getColor(R.color.white,null))
                     binding.tabTopTracksDot.visibility = View.VISIBLE
-                    utils.giveHapticFeedback(this@MainActivity)
+                    HelperUtils.giveHapticFeedback(this@MainActivity)
                 }
             }
         })
         binding.viewPager.registerOnPageChangeCallback(pageChangeCallback)
 
-        utils.replaceFragment(this,binding.fragmentSongPlayer.id, playerFragment)
+        HelperUtils.replaceFragment(this,binding.fragmentSongPlayer.id, playerFragment)
 
         binding.motionLayout.setTransitionListener(object : MotionLayout.TransitionListener {
             override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
