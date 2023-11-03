@@ -49,7 +49,6 @@ class HomeViewPagerFragment : Fragment() {
         songsRvAdapter = RvSongsAdapter(requireContext(), arrayListOf()) {
             vm.currentSongPlaylist.postValue(songsRvAdapter.songs)
             vm.currentSong.postValue(it)
-            vm.stateOpened.postValue(true)
         }
 
         binding.rvSongList.apply {

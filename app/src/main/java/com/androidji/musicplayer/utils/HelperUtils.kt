@@ -9,6 +9,7 @@ import android.os.Vibrator
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.androidji.musicplayer.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,6 +18,12 @@ class HelperUtils {
     companion object {
         fun replaceFragment(activity: FragmentActivity,id : Int, fragment :Fragment) {
             activity.supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.slide_in_from_bottom,
+                    R.anim.slide_out_to_bottom,
+                    R.anim.pop_enter,
+                    R.anim.pop_exit
+                )
                 .replace(id, fragment)
                 .commit()
         }

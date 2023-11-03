@@ -17,6 +17,7 @@ import com.androidji.musicplayer.ui.fragments.HomeViewPagerFragment
 import com.androidji.musicplayer.ui.fragments.SongsViewPagerFragment
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
 import com.androidji.musicplayer.utils.HelperUtils
+import com.bumptech.glide.Glide
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var playerFragment: SongPlayerFragment
     lateinit var pageChangeCallback  : ViewPager2.OnPageChangeCallback
     var fragments = arrayListOf<ViewPagerFragment>()
+    var fragmentStateOpen = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +48,6 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         playerFragment = SongPlayerFragment()
-
-        binding.fragmentSongPlayer.visibility = View.GONE
 
         fragments.add(ViewPagerFragment(HomeViewPagerFragment.newInstance(false),"For You"))
         fragments.add(ViewPagerFragment(HomeViewPagerFragment.newInstance(true),"Top Tracks"))
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         })
         binding.viewPager.registerOnPageChangeCallback(pageChangeCallback)
 
-        HelperUtils.replaceFragment(this,binding.fragmentSongPlayer.id, playerFragment)
+        HelperUtils.replaceFragment(this,binding.fragmentView.id, playerFragment)
     }
 
     private fun apiCalls() {
@@ -86,20 +86,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observer() {
-        vm.stateOpened.observe(this) {
-            if(it) {
-                binding.motionLayout.transitionToEnd()
-            } else {
-                binding.motionLayout.transitionToStart()
-            }
-        }
-
         vm.currentSong.observe(this) {
-            binding.tabLayout.setBackgroundResource(R.color.black)
-            binding.fragmentSongPlayer.visibility = View.VISIBLE
+            fragmentStateOpen = true
+            binding.fragmentView.visibility = View.VISIBLE
+            HelperUtils.replaceFragment(this,binding.fragmentView.id, playerFragment)
             binding.tabLayout.setBackgroundResource(R.color.black)
         }
 
+        vm.currentSongPlayerState.observe(this) {
+            binding.fragmentSongPlayerConstraint.visibility = View.VISIBLE
+            Glide.with(this).load(it.songCover).circleCrop().into(binding.songImage)
+            binding.songName.text = it.songName
+            binding.fragmentSongPlayerConstraint.background = it.songLayoutBg
+            Glide.with(this).load(R.drawable.play_to_pause).into(binding.songPlayButton)
+        }
+
+        vm.currentSongPlayingState.observe(this) {
+            Glide.with(this)
+                .load(if (it) R.drawable.play_to_pause else R.drawable.pause_to_play)
+                .into(binding.songPlayButton)
+        }
+    }
+
+    private fun listeners() {
         binding.tabForYouConstraint.setOnClickListener {
             binding.viewPager.currentItem = 0
         }
@@ -107,11 +116,9 @@ class MainActivity : AppCompatActivity() {
         binding.tabTopTracksConstraint.setOnClickListener {
             binding.viewPager.currentItem = 1
         }
-    }
 
-    private fun listeners() {
-        binding.fragmentSongPlayer.setOnClickListener {
-            vm.stateOpened.postValue(true)
+        binding.songPlayButton.setOnClickListener {
+            vm.currentSongPlayingState.postValue(!(vm.currentSongPlayingState.value ?: false))
         }
     }
 
@@ -121,13 +128,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(vm.stateOpened.value == false) {
+        if(!fragmentStateOpen) {
             val i = Intent()
             i.action = Intent.ACTION_MAIN
             i.addCategory(Intent.CATEGORY_HOME)
             this.startActivity(i)
         } else {
-            vm.stateOpened.postValue(false)
+            fragmentStateOpen = false
+            binding.fragmentView.visibility = View.GONE
         }
         if(false) {
             // dont close the app, put it in background

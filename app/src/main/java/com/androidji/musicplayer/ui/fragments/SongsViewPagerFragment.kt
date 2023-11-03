@@ -25,8 +25,6 @@ class SongsViewPagerFragment : Fragment() {
     var skipCurrentSongCallback = false
     val pageMarginPx by lazy { resources.getDimensionPixelOffset(R.dimen.pageMargin) }
     val offsetPx  by lazy { resources.getDimensionPixelOffset(R.dimen.offset) }
-    var newOffset = 0
-    var listenPagerCallback = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,12 +48,10 @@ class SongsViewPagerFragment : Fragment() {
         pageChangeCallback = (object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if(!listenPagerCallback && (vm.animationOnProgress.value ?: 1f) == 1f ) {
-                    vm.currentSongPlaylist.value?.get(position)?.let {
-                        skipCurrentSongCallback = true
-                        vm.currentSong.postValue(CurrentSong(it, position))
-                        Toast.makeText(requireContext(), "${it.name}", Toast.LENGTH_SHORT).show()
-                    }
+                vm.currentSongPlaylist.value?.get(position)?.let {
+                    skipCurrentSongCallback = true
+                    vm.currentSong.postValue(CurrentSong(it, position))
+                    Toast.makeText(requireContext(), "${it.name}", Toast.LENGTH_SHORT).show()
                 }
             }
         })
@@ -87,23 +83,6 @@ class SongsViewPagerFragment : Fragment() {
 
         vm.currentSongPlaylist.observe(requireActivity()) {
             songsAdapter.refreshData(it)
-        }
-
-        vm.animationOnProgress.observe(requireActivity()) {
-            skipCurrentSongCallback = false
-            newOffset = offsetPx - (offsetPx * it).toInt()
-            binding.imageBg.setPadding(newOffset, 0, newOffset, 0)
-            binding.rvSongs.alpha = 1f - it
-            binding.imageBg.alpha = it
-        }
-
-        vm.animationCompleted.observe(requireActivity()) {
-            if(it) {
-                listenPagerCallback = false
-            } else {
-                binding.rvSongs.currentItem = vm.currentSong.value?.position ?: 0
-                listenPagerCallback = true
-            }
         }
     }
 

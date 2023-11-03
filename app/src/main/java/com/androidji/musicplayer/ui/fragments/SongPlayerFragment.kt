@@ -18,6 +18,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.graphics.ColorUtils.HSLToColor
+import androidx.core.graphics.ColorUtils.calculateLuminance
+import androidx.core.graphics.ColorUtils.colorToHSL
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.palette.graphics.Palette
@@ -25,6 +28,7 @@ import com.androidji.musicplayer.R
 import com.androidji.musicplayer.data.CacheImage
 import com.androidji.musicplayer.data.CurrentSong
 import com.androidji.musicplayer.data.Song
+import com.androidji.musicplayer.data.SongPlayerState
 import com.androidji.musicplayer.databinding.FragmentSongPlayerBinding
 import com.androidji.musicplayer.ui.viewModels.MainViewModel
 import com.androidji.musicplayer.utils.HelperUtils
@@ -38,6 +42,7 @@ import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
+import com.google.android.material.color.utilities.ColorUtils
 import java.util.concurrent.TimeUnit
 
 class SongPlayerFragment : Fragment() {
@@ -98,6 +103,8 @@ class SongPlayerFragment : Fragment() {
     private fun init() {
         songsViewPagerFragment = SongsViewPagerFragment()
 
+        HelperUtils.replaceFragment(requireActivity(),binding.fragmentSongs.id, songsViewPagerFragment)
+
         audioManager = requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         val extensionRendererMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
@@ -140,22 +147,6 @@ class SongPlayerFragment : Fragment() {
             binding.songRunningTimeStamp.text = convertMillisToTime(exoPlayer.currentPosition)
             handler.postDelayed(playbackProgressRunnable, 500)
         }
-
-        binding.layout.addTransitionListener(object : MotionLayout.TransitionListener{
-            override fun onTransitionStarted(motionLayout: MotionLayout?, startId: Int, endId: Int) {
-                vm.animationCompleted.postValue(false)
-            }
-            override fun onTransitionChange(motionLayout: MotionLayout?, startId: Int, endId: Int, progress: Float) {
-                vm.animationOnProgress.postValue(binding.root.progress)
-            }
-            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-                HelperUtils.doInBackground {
-                    Thread.sleep(500)
-                    vm.animationCompleted.postValue(true)
-                }
-            }
-            override fun onTransitionTrigger(motionLayout: MotionLayout?, triggerId: Int, positive: Boolean, progress: Float) {}
-        })
     }
 
     private fun observer() {
@@ -178,6 +169,11 @@ class SongPlayerFragment : Fragment() {
                             HelperUtils.doInMain {
                                 binding.background.background = gradientDrawable
                             }
+                            vm.currentSongPlayerState.postValue(SongPlayerState(
+                                it.song.name ?:"",
+                                it.song.getImageUrl(),
+                                gradientDrawable,
+                            ))
                         }
                         override fun onLoadCleared(placeholder: Drawable?) {}
                     })
@@ -186,26 +182,15 @@ class SongPlayerFragment : Fragment() {
             createPlayerNotificationManager(requireActivity(),exoPlayer,it)
         }
 
-        vm.stateOpened.observe(requireActivity()) {
-            if(it) {
-                binding.itemSongName.textSize = 22f
-                binding.itemSongSinger.visibility = View.VISIBLE
-                binding.itemSongName.setTypeface(null, Typeface.BOLD)
-                binding.layout.transitionToStart()
-            } else {
-                binding.itemSongSinger.visibility = View.GONE
-                binding.itemSongName.textSize = 18f
-                binding.itemSongName.setTypeface(null, Typeface.NORMAL)
-                binding.layout.transitionToEnd()
-            }
+        vm.currentSongPlayingState.observe(requireActivity()) {
+            if(it) pauseSong() else playSong()
         }
-
-        HelperUtils.replaceFragment(requireActivity(),binding.fragmentSongs.id, songsViewPagerFragment)
     }
 
     private fun listeners() {
         binding.buttonPlay.setOnClickListener {
             HelperUtils.giveHapticFeedback(requireActivity())
+            vm.currentSongPlayingState.postValue(!(vm.currentSongPlayingState.value ?: false))
             if(isPlaying) pauseSong() else playSong()
         }
 

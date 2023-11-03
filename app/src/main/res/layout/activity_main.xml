@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/motionLayout"
     android:layout_width="match_parent"
@@ -16,21 +17,43 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/fragment_song_player_constraint"
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:elevation="@dimen/_12dp"
+        android:orientation="horizontal"
+        android:paddingVertical="@dimen/_8dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/tab_layout"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0">
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragment_song_player"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/song_image"
+            android:layout_width="@dimen/_48dp"
             android:layout_height="match_parent"
-            android:elevation="@dimen/_12dp"
-            android:visibility="gone"/>
-    </FrameLayout>
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_20dp"/>
+        <TextView
+            android:id="@+id/song_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:fontFamily="@font/sf_pro_display_regular"
+            android:textSize="@dimen/_18sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_marginStart="@dimen/_16dp"/>
+        <ImageView
+            android:id="@+id/song_play_button"
+            android:layout_width="@dimen/_32dp"
+            android:layout_height="@dimen/_32dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/_16dp"
+            android:background="@drawable/ic_white_circle"/>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/tab_layout"
@@ -56,7 +79,7 @@
                 android:fontFamily="@font/sf_pro_display_regular"
                 android:text="@string/for_you"
                 android:background="@android:color/transparent"
-                android:textSize="@dimen/_18dp"
+                android:textSize="@dimen/_18sp"
                 android:textColor="@color/white"
                 android:gravity="center"/>
             <ImageView
@@ -82,7 +105,7 @@
                 android:fontFamily="@font/sf_pro_display_regular"
                 android:text="@string/top_tracks"
                 android:background="@android:color/transparent"
-                android:textSize="@dimen/_18dp"
+                android:textSize="@dimen/_18sp"
                 android:textColor="@color/white_50"
                 android:gravity="center"/>
             <ImageView
@@ -96,4 +119,11 @@
         </LinearLayout>
     </LinearLayout>
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_view"
+        android:elevation="@dimen/_16dp"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
