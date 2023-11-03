@@ -84,6 +84,7 @@ class SongPlayerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSongPlayerBinding.inflate(inflater)
+
         return binding.root
     }
 

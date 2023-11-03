@@ -77,8 +77,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
         binding.viewPager.registerOnPageChangeCallback(pageChangeCallback)
-
-        HelperUtils.replaceFragment(this,binding.fragmentView.id, playerFragment)
     }
 
     private fun apiCalls() {
@@ -128,18 +126,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(!fragmentStateOpen) {
-            val i = Intent()
-            i.action = Intent.ACTION_MAIN
-            i.addCategory(Intent.CATEGORY_HOME)
-            this.startActivity(i)
-        } else {
-            fragmentStateOpen = false
-            binding.fragmentView.visibility = View.GONE
-        }
-        if(false) {
-            // dont close the app, put it in background
-            super.onBackPressed()
-        }
+        super.onBackPressed()
     }
 }

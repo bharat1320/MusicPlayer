@@ -21,8 +21,8 @@ class HelperUtils {
                 .setCustomAnimations(
                     R.anim.slide_in_from_bottom,
                     R.anim.slide_out_to_bottom,
-                    R.anim.pop_enter,
-                    R.anim.pop_exit
+                    R.anim.slide_in_from_bottom,
+                    R.anim.slide_out_to_bottom,
                 )
                 .replace(id, fragment)
                 .commit()
