@@ -126,6 +126,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
+//        if(fragmentStateOpen) {
+//            fragmentStateOpen = false
+//
+//        } else {
+            super.onBackPressed()
+//        }
     }
 }

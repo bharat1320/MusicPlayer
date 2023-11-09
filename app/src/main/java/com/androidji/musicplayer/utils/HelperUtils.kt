@@ -24,6 +24,7 @@ class HelperUtils {
                     R.anim.slide_in_from_bottom,
                     R.anim.slide_out_to_bottom,
                 )
+                .addToBackStack(id.toString())
                 .replace(id, fragment)
                 .commit()
         }

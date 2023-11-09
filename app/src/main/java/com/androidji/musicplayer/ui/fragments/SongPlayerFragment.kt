@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.media.AudioManager
@@ -17,10 +16,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.graphics.ColorUtils.HSLToColor
-import androidx.core.graphics.ColorUtils.calculateLuminance
-import androidx.core.graphics.ColorUtils.colorToHSL
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.palette.graphics.Palette
@@ -42,7 +37,6 @@ import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import com.google.android.material.color.utilities.ColorUtils
 import java.util.concurrent.TimeUnit
 
 class SongPlayerFragment : Fragment() {

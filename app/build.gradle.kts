@@ -25,7 +25,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField ("String", "BASE_URL", "https://cms.samespace.com/")
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
